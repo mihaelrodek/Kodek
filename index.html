@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Apply the saved/system theme before first paint to avoid a flash of
+         the wrong theme. Keep the storage key in sync with ThemeContext.tsx. -->
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem('portfolio-theme')
+          var dark =
+            stored === 'dark' ||
+            (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches)
+          if (dark) document.documentElement.classList.add('dark')
+        } catch (e) {}
+      })()
+    </script>
+
+    <title>Mihael Rodek — Portfolio</title>
+    <meta
+      name="description"
+      content="Mihael Rodek — software developer. Java & Go backend, React & TypeScript frontend. Full-stack work across banking and public-sector projects."
+    />
+    <meta name="author" content="Mihael Rodek" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="__SITE_URL__/" />
+
+    <!-- Browser UI color -->
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Mihael Rodek" />
+    <meta property="og:title" content="Mihael Rodek — Portfolio" />
+    <meta
+      property="og:description"
+      content="Software developer. Java & Go backend, React & TypeScript frontend. A life in commits — scroll through it."
+    />
+    <meta property="og:url" content="__SITE_URL__/" />
+    <meta property="og:image" content="__SITE_URL__/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Mihael Rodek — Portfolio" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="hr_HR" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Mihael Rodek — Portfolio" />
+    <meta
+      name="twitter:description"
+      content="Software developer. Java & Go backend, React & TypeScript frontend."
+    />
+    <meta name="twitter:image" content="__SITE_URL__/og.png" />
+
+    <!-- Structured data for search engines. A data block (type="application/ld+json")
+         is never executed, so it needs no CSP hash. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Mihael Rodek",
+        "jobTitle": "Software Developer",
+        "url": "__SITE_URL__/",
+        "email": "mailto:mihael.rodek1@gmail.com",
+        "sameAs": [
+          "https://github.com/mihaelrodek",
+          "https://linkedin.com/in/mihaelrodek"
+        ],
+        "worksFor": {
+          "@type": "Organization",
+          "name": "True North"
+        },
+        "alumniOf": {
+          "@type": "CollegeOrUniversity",
+          "name": "Faculty of Electrical Engineering and Computing, University of Zagreb"
+        },
+        "knowsAbout": ["Java", "Go", "React", "TypeScript", "Spring Boot", "Android", "Kubernetes"]
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

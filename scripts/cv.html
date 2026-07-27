@@ -1,0 +1,221 @@
+<!doctype html>
+<!--
+  CV source. Regenerate public/cv.pdf after editing (headless Chrome or Edge):
+
+    & "C:\Program Files\Google\Chrome\Application\chrome.exe" --headless --disable-gpu --no-pdf-header-footer --print-to-pdf="public\cv.pdf" "scripts\cv.html"
+
+  (msedge.exe at "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" works the same.)
+-->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Mihael Rodek — CV</title>
+    <style>
+      @page {
+        size: A4;
+        margin: 14mm 16mm;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+        font-size: 10.5pt;
+        line-height: 1.45;
+        color: #27272a;
+      }
+      a {
+        color: #7e22ce;
+        text-decoration: none;
+      }
+      header {
+        border-bottom: 2px solid #9333ea;
+        padding-bottom: 10px;
+        margin-bottom: 14px;
+      }
+      h1 {
+        font-size: 22pt;
+        letter-spacing: 0.02em;
+        color: #18181b;
+      }
+      .tagline {
+        font-size: 11pt;
+        color: #52525b;
+        margin-top: 2px;
+      }
+      .contact-row {
+        margin-top: 6px;
+        font-size: 9.5pt;
+        color: #52525b;
+      }
+      .contact-row span + span::before {
+        content: '·';
+        margin: 0 6px;
+        color: #a1a1aa;
+      }
+      h2 {
+        font-size: 11pt;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: #7e22ce;
+        margin: 14px 0 6px;
+      }
+      .entry {
+        margin-bottom: 8px;
+        page-break-inside: avoid;
+      }
+      .entry-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 12px;
+      }
+      .entry-title {
+        font-weight: 600;
+        color: #18181b;
+      }
+      .entry-sub {
+        color: #52525b;
+        font-size: 9.5pt;
+      }
+      .entry-date {
+        white-space: nowrap;
+        font-size: 9.5pt;
+        color: #71717a;
+        font-variant-numeric: tabular-nums;
+      }
+      ul {
+        margin: 3px 0 0 16px;
+      }
+      li {
+        margin-bottom: 2px;
+      }
+      .skills {
+        display: grid;
+        grid-template-columns: 110px 1fr;
+        row-gap: 2px;
+        column-gap: 10px;
+      }
+      .skills dt {
+        font-weight: 600;
+        color: #3f3f46;
+        font-size: 9.5pt;
+      }
+      .skills dd {
+        color: #52525b;
+        font-size: 9.5pt;
+      }
+      .muted {
+        color: #71717a;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Mihael Rodek</h1>
+      <p class="tagline">Full Stack Software Developer — Java · Go · React · TypeScript</p>
+      <p class="contact-row">
+        <span>mihael.rodek1@gmail.com</span>
+        <span>github.com/mihaelrodek</span>
+        <span>linkedin.com/in/mihaelrodek</span>
+        <span>Croatia</span>
+      </p>
+    </header>
+
+    <h2>Experience</h2>
+    <div class="entry">
+      <div class="entry-head">
+        <div>
+          <span class="entry-title">Full Stack Developer — True North</span>
+          <div class="entry-sub">Banking &amp; public-sector projects (started as student)</div>
+        </div>
+        <span class="entry-date">Oct 2021 — Present</span>
+      </div>
+      <ul>
+        <li>
+          <strong>RBA.hr — Card Issuing team</strong> <span class="muted">(Oct 2023 — Present)</span>
+          — building and maintaining a new card platform within the RBA Croatia group: features,
+          platform migration, daily incident handling, and production support.
+        </li>
+        <li>
+          <strong>HZMO</strong> <span class="muted">(Dec 2022 — Feb 2023)</span> — sole frontend
+          developer on an application that calculates a user's share of the family pension.
+        </li>
+        <li>
+          <strong>AKD Squid2</strong> <span class="muted">(Oct 2021 — Oct 2023)</span> —
+          microservices platform for card issuing and production management; backend and frontend
+          work across new features, maintenance, and continuous improvement.
+        </li>
+        <li>
+          Hands-on development combined with a consultative approach to defining requirements and
+          delivering features end-to-end.
+        </li>
+      </ul>
+    </div>
+
+    <h2>Education</h2>
+    <div class="entry">
+      <div class="entry-head">
+        <div>
+          <span class="entry-title">MSc in Computer Engineering (univ. mag. ing. comp.)</span>
+          <div class="entry-sub">
+            Faculty of Electrical Engineering and Computing (FER), University of Zagreb
+          </div>
+        </div>
+        <span class="entry-date">2018 — 2023</span>
+      </div>
+      <ul>
+        <li>Master's thesis: Android application for the FER student canteen (MenzaApp).</li>
+        <li>
+          Bachelor's thesis: system for supporting interactive applications and video games on a
+          video wall.
+        </li>
+        <li>Focus: OOP, Android, Expert Java, Web &amp; Mobile, Artificial Intelligence.</li>
+      </ul>
+    </div>
+
+    <h2>Selected projects</h2>
+    <div class="entry">
+      <ul>
+        <li>
+          <strong>Helm File Utils</strong> <span class="muted">(2023, open source)</span> — Helm
+          downloader plugin for file conversion, encoding and manipulation utilities; maintained
+          under True North Engineering. <span class="muted">Go · Helm · Kubernetes</span>
+        </li>
+        <li>
+          <strong>MenzaApp</strong> <span class="muted">(2022)</span> — Android app for the FER
+          student canteen. <span class="muted">Android · Kotlin</span>
+        </li>
+        <li>
+          <strong>PizzaDeliveryApp</strong> <span class="muted">(2021, Agency04 Summer School)</span>
+          — Spring Boot REST API for managing pizza deliveries.
+          <span class="muted">Java · Spring Boot</span>
+        </li>
+        <li>
+          <strong>ShowsApp</strong> <span class="muted">(2020, Infinum Summer School)</span> —
+          Android app with modern architecture patterns. <span class="muted">Android · Kotlin</span>
+        </li>
+        <li>
+          <strong>SmartAgriculture</strong> <span class="muted">(2022)</span> — university IoT
+          project: Waspmote/Pycom sensors with Android &amp; iOS companion apps.
+        </li>
+      </ul>
+    </div>
+
+    <h2>Skills</h2>
+    <dl class="skills">
+      <dt>Backend</dt>
+      <dd>Java, Spring Boot, Go, REST, microservices</dd>
+      <dt>Frontend</dt>
+      <dd>React, TypeScript, HTML/CSS, Tailwind CSS</dd>
+      <dt>Mobile</dt>
+      <dd>Android (Kotlin, Java)</dd>
+      <dt>Platform</dt>
+      <dd>Kubernetes, Helm, Git, CI/CD</dd>
+      <dt>Languages</dt>
+      <dd>Croatian (native), English (professional)</dd>
+    </dl>
+  </body>
+</html>
