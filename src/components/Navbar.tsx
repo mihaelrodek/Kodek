@@ -1,30 +1,27 @@
-import { NavLink } from 'react-router-dom'
-import ThemeToggle from './ThemeToggle'
+import { Menu, X } from 'lucide-react'
+import { Link, NavLink } from 'react-router-dom'
+import Brand from './Brand'
 import LanguageToggle from './LanguageToggle'
+import ThemeToggle from './ThemeToggle'
+import { Button } from './ui/button'
+import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from './ui/sheet'
 import { useTranslation } from '../hooks/useTranslation'
 
 export default function Navbar() {
   const { t } = useTranslation()
   const links = [
-    { to: '/', label: t.nav.home, end: true },
+    { to: '/#services', label: t.nav.services, end: true },
+    { to: '/projects', label: t.nav.work },
     { to: '/about', label: t.nav.about },
-    { to: '/projects', label: t.nav.projects },
     { to: '/contact', label: t.nav.contact },
   ]
 
   return (
-    <header className="sticky top-0 z-50 border-b border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
-      <div className="container-page flex h-14 items-center gap-2 sm:h-16">
-        {/* Left spacer keeps the nav visually centered on wider screens.
-            On mobile, the spacer collapses so we keep the nav close to the
-            left edge and leave room for the toggles. */}
-        <div className="hidden flex-1 sm:block" aria-hidden="true" />
+    <header className="sticky top-0 z-50 border-b border-zinc-200/80 bg-white/90 backdrop-blur-xl dark:border-zinc-800 dark:bg-zinc-950/90">
+      <div className="container-page flex h-[4.5rem] items-center justify-between gap-2">
+        <Brand className="shrink-0" />
 
-        {/* Centered nav */}
-        <nav
-          aria-label="Primary"
-          className="flex flex-1 items-center justify-start gap-0.5 sm:flex-none sm:justify-center sm:gap-1"
-        >
+        <nav aria-label={t.nav.primaryLabel} className="hidden items-center gap-1 lg:flex">
           {links.map((link) => (
             <NavLink
               key={link.to}
@@ -32,10 +29,10 @@ export default function Navbar() {
               end={link.end}
               className={({ isActive }) =>
                 [
-                  'rounded-md px-2 py-1.5 text-xs font-medium whitespace-nowrap transition sm:px-3 sm:text-sm',
+                  'focus-ring inline-flex min-h-11 items-center rounded-lg px-3 text-sm font-medium transition',
                   isActive
-                    ? 'text-accent-600 dark:text-accent-400'
-                    : 'text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100',
+                    ? 'text-accent-700 dark:text-accent-300'
+                    : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-white',
                 ].join(' ')
               }
             >
@@ -44,10 +41,70 @@ export default function Navbar() {
           ))}
         </nav>
 
-        {/* Right controls */}
-        <div className="flex flex-shrink-0 items-center justify-end gap-1.5 sm:flex-1 sm:gap-2">
+        <div className="flex shrink-0 items-center gap-1.5">
           <LanguageToggle />
           <ThemeToggle />
+          <Button
+            asChild
+            className="bg-accent-600 hover:bg-accent-700 hidden px-4 text-white shadow-sm lg:inline-flex"
+          >
+            <Link to="/contact">{t.nav.requestQuote}</Link>
+          </Button>
+
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                aria-label={t.nav.mobileMenu}
+                className="lg:hidden"
+              >
+                <Menu aria-hidden="true" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent
+              side="right"
+              showCloseButton={false}
+              aria-describedby={undefined}
+              className="w-[min(22rem,88vw)] border-zinc-200 bg-white p-0 dark:border-zinc-800 dark:bg-zinc-950"
+            >
+              <SheetHeader className="flex-row items-center justify-between border-b border-zinc-200 p-4 dark:border-zinc-800">
+                <SheetTitle>{t.nav.mobileMenuTitle}</SheetTitle>
+                <SheetClose asChild>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    aria-label={t.nav.mobileMenuClose}
+                  >
+                    <X aria-hidden="true" />
+                  </Button>
+                </SheetClose>
+              </SheetHeader>
+
+              <nav aria-label={t.nav.primaryLabel} className="flex flex-col gap-1 px-4 py-5">
+                {links.map((link) => (
+                  <SheetClose key={link.to} asChild>
+                    <Link
+                      to={link.to}
+                      className="focus-ring inline-flex min-h-12 items-center rounded-lg px-3 text-base font-medium text-zinc-700 transition hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-900"
+                    >
+                      {link.label}
+                    </Link>
+                  </SheetClose>
+                ))}
+                <SheetClose asChild>
+                  <Button
+                    asChild
+                    className="bg-accent-600 hover:bg-accent-700 mt-4 text-white shadow-sm"
+                  >
+                    <Link to="/contact">{t.nav.requestQuote}</Link>
+                  </Button>
+                </SheetClose>
+              </nav>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
     </header>

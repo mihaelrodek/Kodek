@@ -1,0 +1,105 @@
+/*! Kodek badge | https://kodek.hr */
+/* No-JS variant. Markup in snippet.html; modifiers:
+   .kodek-badge--static / --inline   positioning (default: sticky)
+   .kodek-badge--light  / --dark     theme (default: follows prefers-color-scheme)
+   .kodek-badge--left   / --right    alignment (default: center) */
+
+.kodek-badge {
+  --kb-bg: #f3f2f2;
+  --kb-fg: #201e1d;
+  --kb-accent: #15318f;
+  --kb-border: rgba(32, 30, 29, 0.12);
+  position: sticky;
+  bottom: 0;
+  z-index: var(--kodek-badge-z, 40);
+  display: flex;
+  justify-content: center;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 4px 16px calc(4px + env(safe-area-inset-bottom, 0px));
+  background: var(--kb-bg);
+  border-top: 1px solid var(--kb-border);
+}
+
+@media (prefers-color-scheme: dark) {
+  .kodek-badge:not(.kodek-badge--light) {
+    --kb-bg: #201e1d;
+    --kb-fg: #f3f2f2;
+    --kb-accent: #4264e3;
+    --kb-border: rgba(243, 242, 242, 0.14);
+  }
+}
+
+.kodek-badge--dark {
+  --kb-bg: #201e1d;
+  --kb-fg: #f3f2f2;
+  --kb-accent: #4264e3;
+  --kb-border: rgba(243, 242, 242, 0.14);
+}
+
+.kodek-badge--static,
+.kodek-badge--inline {
+  position: static;
+}
+
+.kodek-badge--inline {
+  display: inline-flex;
+  vertical-align: middle;
+  padding: 0;
+  background: none;
+  border: 0;
+}
+
+.kodek-badge--left {
+  justify-content: flex-start;
+}
+
+.kodek-badge--right {
+  justify-content: flex-end;
+}
+
+.kodek-badge__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 36px;
+  padding: 0 6px;
+  color: var(--kb-fg);
+  font:
+    500 13px/1 system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.kodek-badge__link:focus-visible {
+  outline: 2px solid var(--kb-accent);
+  outline-offset: 2px;
+}
+
+.kodek-badge__label {
+  opacity: 0.72;
+}
+
+.kodek-badge__link:hover .kodek-badge__label {
+  opacity: 1;
+}
+
+.kodek-badge__logo {
+  display: block;
+  flex: none;
+  width: auto;
+  height: 24px;
+}
+
+.kodek-badge__word {
+  fill: var(--kb-fg);
+}
+
+.kodek-badge__underscore {
+  fill: var(--kb-accent);
+}

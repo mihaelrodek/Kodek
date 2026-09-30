@@ -1,11 +1,46 @@
 import { useState, type FormEvent } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
+import { ArrowUpRight } from 'lucide-react'
+import { business } from '../data/business'
 import { useTranslation } from '../hooks/useTranslation'
 import type { Translations } from '../i18n/translations'
 
 // Posts to a Cloudflare Pages Function (functions/api/contact.ts) which holds
 // the Web3Forms key server-side and proxies the submission.
 const CONTACT_ENDPOINT = '/api/contact'
+
+/**
+ * Machine codes returned by functions/api/contact.ts. The server never sends
+ * user-facing copy — its English `message` field exists for curl users only —
+ * so everything shown here comes from the translation dictionary.
+ */
+type ErrorCode = 'not_configured' | 'rate_limited' | 'invalid_body' | 'validation' | 'upstream'
+
+/** Fallback for older/edge responses that carry a status but no code. */
+const STATUS_TO_CODE: Record<number, ErrorCode> = {
+  400: 'invalid_body',
+  422: 'validation',
+  429: 'rate_limited',
+  500: 'not_configured',
+  502: 'upstream',
+}
+
+function errorMessage(t: Translations, code: string | undefined, status: number): string {
+  const resolved = code ?? STATUS_TO_CODE[status]
+  switch (resolved) {
+    case 'rate_limited':
+      return t.contact.errors.rateLimited
+    case 'not_configured':
+      return t.contact.errors.notConfigured
+    case 'upstream':
+      return t.contact.errors.upstream
+    case 'validation':
+    case 'invalid_body':
+      return t.contact.errors.validation
+    default:
+      return t.contact.errors.generic(status)
+  }
+}
 
 type SubmitStatus =
   | { kind: 'idle' }
@@ -92,19 +127,19 @@ export default function ContactPage() {
       })
       const data = (await res.json().catch(() => ({}))) as {
         success?: boolean
-        message?: string
+        code?: string
       }
       if (res.ok && data.success) {
         setStatus({ kind: 'success' })
         setFields(INITIAL)
       } else {
-        setStatus({ kind: 'error', message: data.message || t.contact.errors.generic(res.status) })
+        // Never render `data.message`: it is English-only and server-authored.
+        setStatus({ kind: 'error', message: errorMessage(t, data.code, res.status) })
       }
-    } catch (err) {
-      setStatus({
-        kind: 'error',
-        message: err instanceof Error ? err.message : t.contact.errors.network,
-      })
+    } catch {
+      // The thrown error's text is a browser/network detail, not user-facing
+      // copy — always show the translated network message.
+      setStatus({ kind: 'error', message: t.contact.errors.network })
     }
   }
 
@@ -112,78 +147,92 @@ export default function ContactPage() {
 
   return (
     <section className="container-page py-16 md:py-24">
-      <div className="mx-auto grid max-w-5xl gap-12 lg:grid-cols-[2fr_3fr] lg:gap-16">
-        <div>
-          <p className="text-accent-600 dark:text-accent-400 text-xs font-semibold tracking-[0.2em] uppercase">
-            {t.contact.eyebrow}
+      <div className="grid gap-14 lg:grid-cols-[1fr_1.1fr] lg:gap-20">
+        <motion.div
+          initial={{ y: 16 }}
+          animate={{ y: 0 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <p className="section-eyebrow">{t.contact.eyebrow}</p>
+          <h1 className="mt-5 text-[clamp(2.5rem,6vw,4.75rem)] leading-[1.02] font-medium tracking-[-0.055em]">
+            {t.contact.title}
+          </h1>
+          <p className="mt-6 max-w-md text-base leading-relaxed text-zinc-600 sm:text-lg dark:text-zinc-400">
+            {t.contact.intro}
           </p>
-          <h1 className="mt-3 text-3xl sm:text-4xl">{t.contact.title}</h1>
-          <p className="mt-4 text-zinc-600 dark:text-zinc-400">{t.contact.intro}</p>
 
-          <dl className="mt-8 space-y-4 text-sm">
-            <div>
-              <dt className="font-medium text-zinc-500 dark:text-zinc-400">
-                {t.contact.emailLabel}
-              </dt>
-              <dd>
-                <a
-                  href="mailto:mihael.rodek1@gmail.com"
-                  className="text-accent-600 dark:text-accent-400 underline-offset-4 hover:underline"
-                >
-                  mihael.rodek1@gmail.com
-                </a>
-              </dd>
-            </div>
-            <div>
-              <dt className="font-medium text-zinc-500 dark:text-zinc-400">
-                {t.contact.githubLabel}
-              </dt>
-              <dd>
-                <a
-                  href="https://github.com/mihaelrodek"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-accent-600 dark:text-accent-400 underline-offset-4 hover:underline"
-                >
-                  github.com/mihaelrodek
-                </a>
-              </dd>
-            </div>
-            <div>
-              <dt className="font-medium text-zinc-500 dark:text-zinc-400">
-                {t.contact.linkedinLabel}
-              </dt>
-              <dd>
-                <a
-                  href="https://linkedin.com/in/mihaelrodek"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-accent-600 dark:text-accent-400 underline-offset-4 hover:underline"
-                >
-                  linkedin.com/in/mihaelrodek
-                </a>
-              </dd>
-            </div>
-            <div>
-              <dt className="font-medium text-zinc-500 dark:text-zinc-400">{t.contact.cvLabel}</dt>
-              <dd>
-                <a
-                  href="/cv.pdf"
-                  download
-                  className="text-accent-600 dark:text-accent-400 underline-offset-4 hover:underline"
-                >
-                  {t.contact.cvDownload}
-                </a>
-              </dd>
-            </div>
+          <h2 className="mt-14 font-mono text-[10px] font-medium tracking-[0.12em] text-zinc-500 uppercase dark:text-zinc-400">
+            {t.contact.detailsTitle}
+          </h2>
+          <p className="mt-3 max-w-md text-sm leading-6 text-zinc-500 dark:text-zinc-400">
+            {t.contact.responseNote}
+          </p>
+
+          <dl className="mt-6 border-t border-zinc-200 dark:border-zinc-800">
+            {[
+              {
+                label: t.contact.emailLabel,
+                href: `mailto:${business.email}`,
+                text: business.email,
+                external: false,
+              },
+              {
+                label: t.contact.githubLabel,
+                href: business.social.github,
+                text: 'github.com/mihaelrodek',
+                external: true,
+              },
+              {
+                label: t.contact.linkedinLabel,
+                href: business.social.linkedin,
+                text: 'linkedin.com/in/mihaelrodek',
+                external: true,
+              },
+            ].map((item) => (
+              <div
+                key={item.href}
+                className="group relative border-b border-zinc-200 dark:border-zinc-800"
+              >
+                <span
+                  aria-hidden="true"
+                  className="bg-accent-600 dark:bg-accent-500 absolute -bottom-px left-0 h-px w-full origin-left scale-x-0 transition-transform duration-500 ease-out group-focus-within:scale-x-100 group-hover:scale-x-100"
+                />
+                <dt className="sr-only">{item.label}</dt>
+                <dd>
+                  <a
+                    href={item.href}
+                    {...(item.external ? { target: '_blank', rel: 'noreferrer' } : {})}
+                    className="focus-ring flex min-h-14 items-center gap-4 rounded-md py-3 text-sm sm:text-base"
+                  >
+                    <span
+                      aria-hidden="true"
+                      className="w-20 shrink-0 font-mono text-[10px] tracking-widest text-zinc-500 uppercase dark:text-zinc-500"
+                    >
+                      {item.label}
+                    </span>
+                    <span className="min-w-0 flex-1 truncate text-zinc-900 transition-transform duration-500 ease-out group-hover:translate-x-1 dark:text-zinc-100">
+                      {item.text}
+                    </span>
+                    <ArrowUpRight className="group-hover:text-accent-600 dark:group-hover:text-accent-500 size-4 shrink-0 text-zinc-400 transition duration-300 group-hover:rotate-45" />
+                  </a>
+                </dd>
+              </div>
+            ))}
           </dl>
-        </div>
+        </motion.div>
 
-        <form
+        <motion.form
           onSubmit={onSubmit}
           noValidate
-          className="space-y-5 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm sm:p-8 dark:border-zinc-800 dark:bg-zinc-900"
+          initial={{ y: 24 }}
+          animate={{ y: 0 }}
+          transition={{ duration: 0.7, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
+          className="relative space-y-8 overflow-hidden rounded-3xl border border-zinc-200 bg-zinc-50/70 p-6 sm:p-10 dark:border-zinc-800 dark:bg-zinc-900/50"
         >
+          <span
+            aria-hidden="true"
+            className="via-accent-500 absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent to-transparent"
+          />
           <input
             type="text"
             name="botcheck"
@@ -230,7 +279,7 @@ export default function ContactPage() {
           <div>
             <label
               htmlFor="message"
-              className="block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+              className="block font-mono text-[10px] font-medium tracking-[0.12em] text-zinc-600 uppercase dark:text-zinc-400"
             >
               {t.contact.fields.message}
             </label>
@@ -245,16 +294,16 @@ export default function ContactPage() {
               aria-invalid={!!errors.message}
               aria-describedby={errors.message ? 'message-error' : undefined}
               className={[
-                'mt-1.5 block w-full resize-y rounded-md border bg-white px-3 py-2 text-sm shadow-sm transition outline-none',
-                'placeholder:text-zinc-400 dark:bg-zinc-950 dark:text-zinc-100 dark:placeholder:text-zinc-600',
+                'mt-1 block w-full resize-y rounded-none border-0 border-b bg-transparent px-0 py-2 text-base transition-colors duration-300 outline-none sm:text-lg',
+                'placeholder:text-zinc-400 dark:text-zinc-100 dark:placeholder:text-zinc-600',
                 errors.message
-                  ? 'border-red-400 focus:border-red-500 focus:ring-2 focus:ring-red-200 dark:border-red-500 dark:focus:ring-red-900/40'
-                  : 'focus:border-accent-500 focus:ring-accent-500/20 border-zinc-300 focus:ring-2 dark:border-zinc-700',
+                  ? 'border-red-500 focus:border-red-500 focus:shadow-[0_1px_0_0_var(--color-red-500)]'
+                  : 'focus:border-accent-600 dark:focus:border-accent-500 border-zinc-300 hover:border-zinc-400 focus:shadow-[0_1px_0_0_var(--color-accent-600)] dark:border-zinc-700 dark:hover:border-zinc-500 dark:focus:shadow-[0_1px_0_0_var(--color-accent-500)]',
               ].join(' ')}
               placeholder={t.contact.fields.placeholder}
             />
             {errors.message && (
-              <p id="message-error" className="mt-1.5 text-xs text-red-600 dark:text-red-400">
+              <p id="message-error" className="mt-2 text-xs text-red-600 dark:text-red-400">
                 {errors.message}
               </p>
             )}
@@ -264,14 +313,17 @@ export default function ContactPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="bg-accent-600 hover:bg-accent-700 focus:ring-accent-500/40 inline-flex items-center justify-center gap-2 rounded-md px-5 py-2.5 text-sm font-medium text-white shadow-sm transition focus:ring-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
+              className="focus-ring group bg-accent-600 hover:bg-accent-700 inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-7 text-sm font-medium text-white transition disabled:cursor-not-allowed disabled:opacity-60"
             >
               {submitting ? (
                 <>
                   <Spinner /> {t.contact.submitting}
                 </>
               ) : (
-                t.contact.submit
+                <>
+                  {t.contact.submit}
+                  <ArrowUpRight className="size-4 transition-transform duration-300 group-hover:rotate-45" />
+                </>
               )}
             </button>
 
@@ -300,7 +352,7 @@ export default function ContactPage() {
               )}
             </AnimatePresence>
           </div>
-        </form>
+        </motion.form>
       </div>
     </section>
   )
@@ -333,10 +385,15 @@ function Field({
 }: FieldProps) {
   return (
     <div>
-      <label htmlFor={id} className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+      <label
+        htmlFor={id}
+        className="block font-mono text-[10px] font-medium tracking-[0.12em] text-zinc-600 uppercase dark:text-zinc-400"
+      >
         {label}
         {optionalLabel && (
-          <span className="ml-1 text-zinc-400 dark:text-zinc-600">{optionalLabel}</span>
+          <span className="ml-1 tracking-normal text-zinc-500 normal-case dark:text-zinc-500">
+            {optionalLabel}
+          </span>
         )}
       </label>
       <input
@@ -351,15 +408,15 @@ function Field({
         aria-invalid={!!error}
         aria-describedby={error ? `${id}-error` : undefined}
         className={[
-          'mt-1.5 block w-full rounded-md border bg-white px-3 py-2 text-sm shadow-sm transition outline-none',
-          'placeholder:text-zinc-400 dark:bg-zinc-950 dark:text-zinc-100 dark:placeholder:text-zinc-600',
+          'mt-1 block min-h-12 w-full rounded-none border-0 border-b bg-transparent px-0 py-2 text-base transition-colors duration-300 outline-none sm:text-lg',
+          'placeholder:text-zinc-400 dark:text-zinc-100 dark:placeholder:text-zinc-600',
           error
-            ? 'border-red-400 focus:border-red-500 focus:ring-2 focus:ring-red-200 dark:border-red-500 dark:focus:ring-red-900/40'
-            : 'focus:border-accent-500 focus:ring-accent-500/20 border-zinc-300 focus:ring-2 dark:border-zinc-700',
+            ? 'border-red-500 focus:border-red-500 focus:shadow-[0_1px_0_0_var(--color-red-500)]'
+            : 'focus:border-accent-600 dark:focus:border-accent-500 border-zinc-300 hover:border-zinc-400 focus:shadow-[0_1px_0_0_var(--color-accent-600)] dark:border-zinc-700 dark:hover:border-zinc-500 dark:focus:shadow-[0_1px_0_0_var(--color-accent-500)]',
         ].join(' ')}
       />
       {error && (
-        <p id={`${id}-error`} className="mt-1.5 text-xs text-red-600 dark:text-red-400">
+        <p id={`${id}-error`} className="mt-2 text-xs text-red-600 dark:text-red-400">
           {error}
         </p>
       )}

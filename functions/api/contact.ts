@@ -5,6 +5,12 @@
  * encrypted env var in the Pages project) so it never ships in the client
  * bundle. Validates input, honors the honeypot, then forwards to Web3Forms.
  *
+ * Responses are deliberately opaque: `{ success: true }` on success, otherwise
+ * `{ success: false, code }` with a stable machine code the client maps to a
+ * translated string. The upstream (Web3Forms) response body is never forwarded
+ * — it is not localized and may leak provider detail. The English `message`
+ * field is kept for curl users only; the client must not display it.
+ *
  * Local dev: runs under `wrangler pages dev` (plain `vite dev` does not serve
  * /functions). See README.
  */
@@ -48,11 +54,40 @@ function rateLimited(ip: string): boolean {
   return false
 }
 
+/** Machine-readable failure codes. Kept in sync with ContactPage.tsx. */
+type ErrorCode = 'not_configured' | 'rate_limited' | 'invalid_body' | 'validation' | 'upstream'
+
+const ERROR_STATUS: Record<ErrorCode, number> = {
+  not_configured: 500,
+  rate_limited: 429,
+  invalid_body: 400,
+  validation: 422,
+  upstream: 502,
+}
+
+// English only, and only so a curl user sees something readable. The client
+// renders its own translated copy from `code`.
+const ERROR_MESSAGE: Record<ErrorCode, string> = {
+  not_configured: 'Contact form is not configured.',
+  rate_limited: 'Too many requests — please try again later.',
+  invalid_body: 'Invalid request body.',
+  validation: 'Validation failed.',
+  upstream: 'Could not deliver the message right now.',
+}
+
 function json(data: unknown, status: number): Response {
   return new Response(JSON.stringify(data), {
     status,
     headers: { 'Content-Type': 'application/json' },
   })
+}
+
+function ok(): Response {
+  return json({ success: true }, 200)
+}
+
+function fail(code: ErrorCode): Response {
+  return json({ success: false, code, message: ERROR_MESSAGE[code] }, ERROR_STATUS[code])
 }
 
 export const onRequestPost = async (context: {
@@ -61,24 +96,20 @@ export const onRequestPost = async (context: {
 }): Promise<Response> => {
   const { request, env } = context
 
-  if (!env.WEB3FORMS_ACCESS_KEY) {
-    return json({ success: false, message: 'Contact form is not configured.' }, 500)
-  }
+  if (!env.WEB3FORMS_ACCESS_KEY) return fail('not_configured')
 
   const ip = request.headers.get('CF-Connecting-IP') ?? 'unknown'
-  if (rateLimited(ip)) {
-    return json({ success: false, message: 'Too many requests — please try again later.' }, 429)
-  }
+  if (rateLimited(ip)) return fail('rate_limited')
 
   let body: ContactBody
   try {
     body = (await request.json()) as ContactBody
   } catch {
-    return json({ success: false, message: 'Invalid request body.' }, 400)
+    return fail('invalid_body')
   }
 
   // Honeypot — silently accept bots without forwarding.
-  if (body.botcheck) return json({ success: true }, 200)
+  if (body.botcheck) return ok()
 
   const name = (body.name ?? '').trim()
   const email = (body.email ?? '').trim()
@@ -95,23 +126,32 @@ export const onRequestPost = async (context: {
     message.length > 5000 ||
     subject.length > 200
   ) {
-    return json({ success: false, message: 'Validation failed.' }, 422)
+    return fail('validation')
   }
 
-  const res = await fetch('https://api.web3forms.com/submit', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-    body: JSON.stringify({
-      access_key: env.WEB3FORMS_ACCESS_KEY,
-      from_name: 'Portfolio contact form',
-      subject: subject || 'New message from your portfolio',
-      name,
-      email,
-      message,
-      page: (body.page ?? '').slice(0, 300),
-    }),
-  })
+  let res: Response
+  try {
+    res = await fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({
+        access_key: env.WEB3FORMS_ACCESS_KEY,
+        from_name: 'Portfolio contact form',
+        subject: subject || 'New message from your portfolio',
+        name,
+        email,
+        message,
+        page: (body.page ?? '').slice(0, 300),
+      }),
+    })
+  } catch {
+    // Network failure reaching Web3Forms — indistinguishable to the caller
+    // from an upstream error, and reported the same way.
+    return fail('upstream')
+  }
 
-  const data = await res.json().catch(() => ({}))
-  return json(data, res.ok ? 200 : res.status)
+  // The upstream body is intentionally dropped: whatever went wrong there,
+  // the client only ever needs "it did not go through".
+  if (!res.ok) return fail('upstream')
+  return ok()
 }

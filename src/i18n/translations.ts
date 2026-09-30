@@ -19,11 +19,135 @@ export const LANG_LABELS: Record<Lang, string> = {
 }
 
 const en = {
+  landing: {
+    eyebrow: 'Independent development studio · Croatia',
+    titleA: 'Good ideas.',
+    titleB: 'Thoughtfully built.',
+    intro:
+      'Custom web apps, business websites, and personal portfolios. Built with care, from the first conversation to the final detail.',
+    primaryCta: "Let's build something",
+    secondaryCta: 'Explore the work',
+    scroll: 'Discover Kodek',
+    servicesEyebrow: '01 / What I do',
+    servicesTitle: 'The right build.\nFor your next chapter.',
+    servicesIntro:
+      "A new business, a better workflow, or a place to make your work shine. Let's make the web work for you.",
+    services: [
+      {
+        title: 'Custom web applications',
+        body: 'Turn a process that slows you down into a tool that moves you forward. Purpose-built applications, integrations, and business tools.',
+        tag: 'Built around your business',
+      },
+      {
+        title: 'Small-business websites',
+        body: 'A clear, fast, and easy-to-use home for your business. Help the right people find you and take the next step.',
+        tag: 'A better first impression',
+      },
+      {
+        title: 'Personal portfolios',
+        body: 'Give your work a home that feels like you. A considered online presence for creatives, freelancers, and professionals.',
+        tag: 'Distinctly yours',
+      },
+      {
+        title: 'Care & improvements',
+        body: 'Keep moving after launch. Thoughtful updates, fixes, and improvements as your website and business evolve.',
+        tag: 'Here for what comes next',
+      },
+    ],
+    serviceCta: 'Tell me what you need',
+    processEyebrow: '02 / How it works',
+    processTitle: 'Less guesswork.\nMore getting there.',
+    processIntro:
+      'You work directly with the person building your project. Clear communication, shared decisions, and progress you can see.',
+    process: [
+      {
+        title: 'First, we talk.',
+        body: 'Your goals, your audience, and what success looks like. We agree on the scope before the work begins.',
+      },
+      {
+        title: 'Make it tangible.',
+        body: 'Structure and design turn the idea into something you can explore. We refine the direction together.',
+      },
+      {
+        title: 'Build with care.',
+        body: 'Clean development, regular check-ins, and testing across devices. You stay part of the process.',
+      },
+      {
+        title: 'Launch. Then grow.',
+        body: 'A considered handover and a plan for what comes next. Support and improvements can continue after launch.',
+      },
+    ],
+    workEyebrow: '03 / Selected work',
+    workTitle: 'A look under the hood.',
+    workIntro:
+      'Selected open-source, learning, and university projects by Mihael Rodek, created before Kodek.',
+    allWork: 'View all work',
+    projectCta: 'Explore project',
+    stackEyebrow: 'Good foundations, thoughtfully chosen.',
+    stackIntro: 'Familiar tools. The right fit for your project.',
+    founderEyebrow: '04 / The person behind Kodek',
+    founderTitle: 'A small studio.\nA personal commitment.',
+    founderBody:
+      "I'm Mihael Rodek, a software developer based in Croatia. Kodek brings together my experience across backend, web, and mobile development with a simple goal: making useful things, well.",
+    founderPoints: [
+      'Direct communication',
+      'Thoughtful technical choices',
+      'Attention beyond launch',
+    ],
+    founderCta: 'A little more about me',
+    founderRole: 'Founder & developer',
+    founderLocation: 'Kamenica, Croatia',
+    faqEyebrow: '05 / A few answers',
+    faqTitle: 'Before we begin.',
+    faqIntro: "Something else on your mind? Let's talk.",
+    faqs: [
+      {
+        question: 'What kinds of projects can we work on?',
+        answer:
+          'Custom web applications, small-business websites, and personal portfolios are the main focus. If you need integrations, improvements to an existing website, or something a little different, tell me what you have in mind.',
+      },
+      {
+        question: 'How much will my project cost?',
+        answer:
+          "Every project has a different scope. After an initial conversation, you'll receive a proposal based on the features, design, and work involved. We'll agree on scope and pricing before development starts.",
+      },
+      {
+        question: 'How long does a project take?',
+        answer:
+          "It depends on the size of the project and how ready your content and requirements are. We'll agree on a realistic timeline and milestones once the scope is clear.",
+      },
+      {
+        question: 'Do I need a complete brief to get started?',
+        answer:
+          "No. A short description of your idea, who it's for, and what you'd like to achieve is enough to start the conversation. We can work through the details together.",
+      },
+      {
+        question: 'Can you help after the site goes live?',
+        answer:
+          'Yes. We can agree on ongoing maintenance, fixes, and new features based on your needs. The support arrangement and its scope are discussed as part of the project.',
+      },
+      {
+        question: 'Can we work together remotely?',
+        answer:
+          "Yes. Kodek is based in Croatia and can collaborate remotely in Croatian or English. We'll choose a simple way to share progress and feedback that works for both of us.",
+      },
+    ],
+    ctaEyebrow: 'A good place to start',
+    ctaTitle: "Have something in mind?\nLet's make it happen.",
+    ctaBody: "A rough idea or a detailed brief. Either way, I'd love to hear it.",
+    ctaNote: "Tell me about your project. We'll work out the next step together.",
+    disciplines: 'Web · Software · Design',
+  },
   nav: {
-    home: 'Home',
-    about: 'About',
-    projects: 'Projects',
+    services: 'Services',
+    work: 'Work',
+    about: 'About me',
     contact: 'Contact',
+    requestQuote: 'Request a quote',
+    primaryLabel: 'Primary navigation',
+    mobileMenu: 'Open navigation menu',
+    mobileMenuClose: 'Close navigation menu',
+    mobileMenuTitle: 'Navigation',
   },
   theme: {
     // One neutral label for both states: the button's markup must not depend
@@ -35,30 +159,32 @@ const en = {
     short: { en: 'EN', hr: 'HR' } as Record<Lang, string>,
     switchTo: (l: string) => `Switch language to ${l}`,
   },
-  home: {
-    eyebrow: 'Mihael Rodek',
-    titleA: 'A life in commits.',
-    titleB: 'Scroll through it',
-  },
   footer: {
-    copyright: (year: number) => `© ${year} Mihael Rodek`,
-    built: 'Built with React, TypeScript & Tailwind',
+    summary: 'Custom software, thoughtfully built in Croatia.',
+    navigation: 'Navigation',
+    legal: 'Business details',
+    social: 'Elsewhere',
+    owner: 'Owner',
+    address: 'Registered address',
+    oib: 'OIB',
+    email: 'Email',
+    rights: (year: number) => `© ${year} Kodek. All rights reserved.`,
   },
   timeline: {
     ariaLabel: 'Life timeline',
     selectedProjects: 'Selected projects',
+    skip: 'Skip timeline',
   },
   about: {
-    title: 'About',
-    body: "Short bio goes here. Write a paragraph or two about your background, what you enjoy working on, and what you're currently learning.",
+    eyebrow: 'About me',
+    body: 'I’m Mihael Rodek, a full-stack software engineer and the founder of Kodek. I hold an MSc in Computer Engineering from FER and build reliable products across web, backend, and mobile systems, with experience in banking and public-sector projects.',
     downloadCv: 'Download CV (PDF)',
+    timelineTitle: 'My path so far',
+    skillsTitle: 'Skills',
+    skillsIntro: 'Technologies I use to take products from a clear idea to dependable software.',
   },
   projects: {
-    eyebrow: 'Projects',
-    title: "Things I've built.",
-    intro: 'A mix of open source, university projects, and side experiments.',
-    countSingular: (n: number) => `${n} project total.`,
-    countPlural: (n: number) => `${n} projects total.`,
+    eyebrow: 'Work',
     all: 'All',
     categories: {
       'open-source': 'Open source',
@@ -67,6 +193,7 @@ const en = {
       backend: 'Backend',
       iot: 'IoT',
       academic: 'Academic',
+      personal: 'Personal projects',
     },
     searchPlaceholder: 'Search projects…',
     searchAria: 'Search projects',
@@ -83,35 +210,43 @@ const en = {
     },
   },
   contact: {
-    eyebrow: 'Contact',
-    title: 'Say hi.',
+    eyebrow: 'Start a project',
+    title: 'Let’s build something useful.',
     intro:
-      "Got a question, an opportunity, or just want to chat about Java, React, or a project you're working on? Drop a message — it lands in my inbox.",
+      'Tell me what you need, where the project stands, and what a successful outcome looks like. I’ll reply with practical next steps.',
+    detailsTitle: 'Contact details',
+    responseNote: 'Prefer email? Write directly and include any useful links or requirements.',
     emailLabel: 'Email',
     githubLabel: 'GitHub',
     linkedinLabel: 'LinkedIn',
-    cvLabel: 'CV',
-    cvDownload: 'Download PDF',
     fields: {
       name: 'Name',
       email: 'Email',
-      subject: 'Subject',
-      message: 'Message',
+      subject: 'Project or company',
+      message: 'How can I help?',
       optional: '(optional)',
-      placeholder: "Tell me what's on your mind…",
+      placeholder: 'A short overview, preferred timing, and any helpful context…',
     },
-    submit: 'Send message',
+    submit: 'Request a quote',
     submitting: 'Sending…',
-    success: 'Thanks — your message is on its way.',
+    success: 'Thanks — your inquiry is on its way.',
     errors: {
-      name: 'Your name, please.',
-      emailRequired: 'I need an email to reply to.',
-      emailInvalid: "That doesn't look like a valid email.",
-      messageRequired: "Don't forget the message.",
-      messageShort: 'A few more words — at least 10 characters.',
+      name: 'Please enter your name.',
+      emailRequired: 'Please enter an email for the reply.',
+      emailInvalid: 'Please enter a valid email address.',
+      messageRequired: 'Please add a short project overview.',
+      messageShort: 'Please add a little more detail — at least 10 characters.',
       network: 'Network error — please try again.',
+      // Keyed by the `code` field of the /api/contact error response.
+      rateLimited: 'Too many messages just now — please try again in a few minutes.',
+      notConfigured: 'The form is offline right now — please email me directly.',
+      upstream: "The message couldn't be delivered — please try again shortly.",
+      validation: 'Please check the form and try again.',
       generic: (status: number) => `Submission failed (HTTP ${status}).`,
     },
+  },
+  a11y: {
+    skipToContent: 'Skip to content',
   },
   notFound: {
     code: '404',
@@ -124,44 +259,170 @@ const en = {
 export type Translations = typeof en
 
 const hr: Translations = {
+  landing: {
+    eyebrow: 'Neovisni razvojni studio · Hrvatska',
+    titleA: 'Dobre ideje.',
+    titleB: 'Promišljena izvedba.',
+    intro:
+      'Web aplikacije po mjeri, poslovne web stranice i osobni portfoliji. Pažljivo izrađeni, od prvog razgovora do posljednjeg detalja.',
+    primaryCta: 'Krenimo od vaše ideje',
+    secondaryCta: 'Pogledajte radove',
+    scroll: 'Upoznajte Kodek',
+    servicesEyebrow: '01 / Usluge',
+    servicesTitle: 'Pravo rješenje.\nZa vaš sljedeći korak.',
+    servicesIntro:
+      'Pokrećete posao, želite jednostavniji rad ili mjesto za svoje radove? Izgradimo ono što vam treba.',
+    services: [
+      {
+        title: 'Web aplikacije po mjeri',
+        body: 'Pretvorite procese koji vas usporavaju u alate koji vam olakšavaju posao. Namjenske aplikacije, integracije i poslovni alati.',
+        tag: 'Prilagođeno vašem poslovanju',
+      },
+      {
+        title: 'Web stranice za male tvrtke',
+        body: 'Pregledna, brza i jednostavna web stranica za vaš posao. Pomozite pravim ljudima da vas pronađu i jave vam se.',
+        tag: 'Za dobar prvi dojam',
+      },
+      {
+        title: 'Osobni portfoliji',
+        body: 'Predstavite radove na način koji odražava vas. Promišljena web prisutnost za kreativce, freelancere i stručnjake.',
+        tag: 'Prepoznatljivo vaši',
+      },
+      {
+        title: 'Održavanje i nadogradnje',
+        body: 'Razvoj se nastavlja i nakon objave. Ažuriranja, ispravci i poboljšanja koja prate rast vaše web stranice i poslovanja.',
+        tag: 'Podrška za sljedeći korak',
+      },
+    ],
+    serviceCta: 'Recite mi što vam treba',
+    processEyebrow: '02 / Način rada',
+    processTitle: 'Jasan dogovor.\nVidljiv napredak.',
+    processIntro:
+      'Surađujete izravno s osobom koja razvija vaš projekt. Otvorena komunikacija, zajedničke odluke i napredak koji možete pratiti.',
+    process: [
+      {
+        title: 'Prvo, razgovor.',
+        body: 'Vaši ciljevi, vaša publika i željeni rezultat. Dogovaramo opseg projekta prije početka rada.',
+      },
+      {
+        title: 'Ideja dobiva oblik.',
+        body: 'Struktura i dizajn pretvaraju ideju u nešto opipljivo. Zajedno razrađujemo smjer.',
+      },
+      {
+        title: 'Pažljiva izrada.',
+        body: 'Kvalitetan kod, redoviti dogovori i testiranje na različitim uređajima. Uključeni ste u svaki korak.',
+      },
+      {
+        title: 'Objava i daljnji rast.',
+        body: 'Jasna primopredaja i plan za dalje. Podršku i nadogradnje možemo nastaviti i nakon objave.',
+      },
+    ],
+    workEyebrow: '03 / Odabrani radovi',
+    workTitle: 'Pogled iza koda.',
+    workIntro:
+      'Odabrani open source, edukacijski i fakultetski projekti Mihaela Rodeka, nastali prije Kodeka.',
+    allWork: 'Svi radovi',
+    projectCta: 'Pogledajte projekt',
+    stackEyebrow: 'Dobri temelji, promišljen odabir.',
+    stackIntro: 'Provjereni alati. Pravi izbor za vaš projekt.',
+    founderEyebrow: '04 / Osoba iza Kodeka',
+    founderTitle: 'Mali studio.\nOsobna odgovornost.',
+    founderBody:
+      'Ja sam Mihael Rodek, programer iz Hrvatske. Kodek povezuje moje iskustvo u razvoju backenda, weba i mobilnih aplikacija s jednostavnim ciljem: izraditi nešto korisno i kvalitetno.',
+    founderPoints: [
+      'Izravna komunikacija',
+      'Promišljena tehnička rješenja',
+      'Briga i nakon objave',
+    ],
+    founderCta: 'Nešto više o meni',
+    founderRole: 'Osnivač i programer',
+    founderLocation: 'Kamenica, Hrvatska',
+    faqEyebrow: '05 / Nekoliko odgovora',
+    faqTitle: 'Prije nego krenemo.',
+    faqIntro: 'Imate još pitanja? Javite se.',
+    faqs: [
+      {
+        question: 'Na kakvim projektima možemo surađivati?',
+        answer:
+          'Fokus je na web aplikacijama po mjeri, web stranicama za male tvrtke i osobnim portfolijima. Trebate li integracije, doradu postojeće stranice ili nešto drukčije, javite mi svoju ideju.',
+      },
+      {
+        question: 'Koliko će projekt koštati?',
+        answer:
+          'Svaki projekt ima drukčiji opseg. Nakon uvodnog razgovora dobit ćete ponudu prema potrebnim funkcionalnostima, dizajnu i količini posla. Opseg i cijenu dogovaramo prije početka razvoja.',
+      },
+      {
+        question: 'Koliko traje izrada?',
+        answer:
+          'Trajanje ovisi o veličini projekta te spremnosti sadržaja i zahtjeva. Kad utvrdimo opseg, dogovorit ćemo realan rok i ključne korake.',
+      },
+      {
+        question: 'Trebam li imati gotov projektni zadatak?',
+        answer:
+          'Ne. Dovoljan je kratak opis ideje, kome je namijenjena i što želite postići. Detalje možemo razraditi zajedno.',
+      },
+      {
+        question: 'Pružate li podršku nakon objave?',
+        answer:
+          'Da. Možemo dogovoriti održavanje, ispravke i nove funkcionalnosti prema vašim potrebama. Način i opseg podrške definiramo u sklopu projekta.',
+      },
+      {
+        question: 'Možemo li surađivati na daljinu?',
+        answer:
+          'Da. Kodek posluje iz Hrvatske, a suradnja na daljinu moguća je na hrvatskom ili engleskom jeziku. Dogovorit ćemo jednostavan način praćenja napretka i razmjene povratnih informacija.',
+      },
+    ],
+    ctaEyebrow: 'Dobar početak',
+    ctaTitle: 'Imate ideju?\nPretvorimo je u stvarnost.',
+    ctaBody: 'Prva zamisao ili detaljan plan. Rado ću čuti što imate na umu.',
+    ctaNote: 'Opišite mi svoj projekt. Zajedno ćemo dogovoriti sljedeći korak.',
+    disciplines: 'Web · Softver · Dizajn',
+  },
   nav: {
-    home: 'Početna',
+    services: 'Usluge',
+    work: 'Radovi',
     about: 'O meni',
-    projects: 'Projekti',
     contact: 'Kontakt',
+    requestQuote: 'Zatraži ponudu',
+    primaryLabel: 'Glavna navigacija',
+    mobileMenu: 'Otvori navigacijski izbornik',
+    mobileMenuClose: 'Zatvori navigacijski izbornik',
+    mobileMenuTitle: 'Navigacija',
   },
   theme: {
-    toggle: 'Uključi/isključi tamni način',
+    toggle: 'Uključi ili isključi tamni način',
   },
   language: {
     label: 'Jezik',
     short: { en: 'EN', hr: 'HR' },
     switchTo: (l: string) => `Promijeni jezik u ${l}`,
   },
-  home: {
-    eyebrow: 'Mihael Rodek',
-    titleA: 'Život u commitovima.',
-    titleB: 'Skrolaj kroz njega',
-  },
   footer: {
-    copyright: (year: number) => `© ${year} Mihael Rodek`,
-    built: 'Izrađeno uz React, TypeScript i Tailwind',
+    summary: 'Softver po mjeri, promišljeno izrađen u Hrvatskoj.',
+    navigation: 'Navigacija',
+    legal: 'Podaci o obrtu',
+    social: 'Društvene mreže',
+    owner: 'Vlasnik',
+    address: 'Sjedište',
+    oib: 'OIB',
+    email: 'Email',
+    rights: (year: number) => `© ${year} Kodek. Sva prava pridržana.`,
   },
   timeline: {
     ariaLabel: 'Životna vremenska crta',
     selectedProjects: 'Odabrani projekti',
+    skip: 'Preskoči vremensku crtu',
   },
   about: {
-    title: 'O meni',
-    body: 'Ovdje ide kratak životopis. Napiši nekoliko rečenica o sebi, što voliš raditi i što trenutno učiš.',
+    eyebrow: 'O meni',
+    body: 'Ja sam Mihael Rodek, full-stack softverski inženjer i osnivač Kodeka. Magistrirao sam računarstvo na FER-u te razvijam pouzdana web, backend i mobilna rješenja, uz iskustvo na projektima u bankarskom i javnom sektoru.',
     downloadCv: 'Preuzmi životopis (PDF)',
+    timelineTitle: 'Moj dosadašnji put',
+    skillsTitle: 'Vještine',
+    skillsIntro: 'Tehnologije kojima jasnu ideju pretvaram u pouzdan softverski proizvod.',
   },
   projects: {
-    eyebrow: 'Projekti',
-    title: 'Stvari koje sam izradio.',
-    intro: 'Mješavina open source projekata, fakultetskih radova i osobnih eksperimenata.',
-    countSingular: (n: number) => `Ukupno ${n} projekt.`,
-    countPlural: (n: number) => `Ukupno ${n} projekata.`,
+    eyebrow: 'Radovi',
     all: 'Sve',
     categories: {
       'open-source': 'Open source',
@@ -170,6 +431,7 @@ const hr: Translations = {
       backend: 'Backend',
       iot: 'IoT',
       academic: 'Akademski',
+      personal: 'Privatni projekti',
     },
     searchPlaceholder: 'Pretraži projekte…',
     searchAria: 'Pretraži projekte',
@@ -178,48 +440,56 @@ const hr: Translations = {
     sortOldest: 'Najstarije',
     sortAlpha: 'A → Z',
     showing: (n: number, m: number) => `Prikazano ${n} od ${m}`,
-    clear: 'Očisti filtere',
+    clear: 'Očisti filtre',
     empty: {
       title: 'Nema rezultata',
       body: 'Pokušaj s drugom kategorijom ili očisti pretragu.',
-      reset: 'Očisti filtere',
+      reset: 'Očisti filtre',
     },
   },
   contact: {
-    eyebrow: 'Kontakt',
-    title: 'Javi se.',
+    eyebrow: 'Pokrenimo projekt',
+    title: 'Izgradimo nešto korisno.',
     intro:
-      'Imaš pitanje, priliku ili samo želiš popričati o Javi, Reactu ili projektu na kojem radiš? Pošalji poruku — stiže direktno u moj inbox.',
+      'Opišite što vam treba, u kojoj je fazi projekt i kako izgleda uspješan rezultat. Odgovorit ću s konkretnim prijedlogom sljedećih koraka.',
+    detailsTitle: 'Kontaktni podaci',
+    responseNote:
+      'Radije koristite email? Javite se izravno i priložite korisne poveznice ili zahtjeve.',
     emailLabel: 'Email',
     githubLabel: 'GitHub',
     linkedinLabel: 'LinkedIn',
-    cvLabel: 'Životopis',
-    cvDownload: 'Preuzmi PDF',
     fields: {
-      name: 'Ime',
+      name: 'Ime i prezime',
       email: 'Email',
-      subject: 'Predmet',
-      message: 'Poruka',
+      subject: 'Projekt ili tvrtka',
+      message: 'Kako mogu pomoći?',
       optional: '(neobavezno)',
-      placeholder: 'Reci mi što ti je na umu…',
+      placeholder: 'Kratak opis, željeni rok i druge korisne informacije…',
     },
-    submit: 'Pošalji poruku',
+    submit: 'Zatraži ponudu',
     submitting: 'Šalje se…',
-    success: 'Hvala — tvoja poruka je na putu.',
+    success: 'Hvala — vaš je upit poslan.',
     errors: {
-      name: 'Molim te, upiši ime.',
-      emailRequired: 'Treba mi email za odgovor.',
-      emailInvalid: 'To ne izgleda kao valjan email.',
-      messageRequired: 'Ne zaboravi poruku.',
-      messageShort: 'Još malo — barem 10 znakova.',
-      network: 'Greška u mreži — pokušaj ponovno.',
+      name: 'Upišite svoje ime.',
+      emailRequired: 'Upišite email na koji mogu odgovoriti.',
+      emailInvalid: 'Upišite valjanu email adresu.',
+      messageRequired: 'Dodajte kratak opis projekta.',
+      messageShort: 'Dodajte još malo detalja — barem 10 znakova.',
+      network: 'Mrežna pogreška — pokušajte ponovno.',
+      rateLimited: 'Previše poruka u kratkom vremenu — pokušajte ponovno za nekoliko minuta.',
+      notConfigured: 'Obrazac trenutačno ne radi — javite mi se izravno emailom.',
+      upstream: 'Poruku nije bilo moguće dostaviti — pokušajte ponovno uskoro.',
+      validation: 'Provjerite unesene podatke i pokušajte ponovno.',
       generic: (status: number) => `Slanje nije uspjelo (HTTP ${status}).`,
     },
+  },
+  a11y: {
+    skipToContent: 'Preskoči na sadržaj',
   },
   notFound: {
     code: '404',
     title: 'Stranica nije pronađena',
-    body: 'Stranica koju tražiš ne postoji.',
+    body: 'Stranica koju tražite ne postoji.',
     back: 'Natrag na početnu',
   },
 }

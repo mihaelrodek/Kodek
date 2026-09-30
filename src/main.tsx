@@ -1,6 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot, hydrateRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
+import { MotionConfig } from 'framer-motion'
 import './index.css'
 import App from './App'
 import { ThemeProvider } from './contexts/ThemeContext'
@@ -10,13 +11,17 @@ const container = document.getElementById('root')!
 
 const app = (
   <StrictMode>
-    <BrowserRouter>
-      <LanguageProvider>
-        <ThemeProvider>
-          <App />
-        </ThemeProvider>
-      </LanguageProvider>
-    </BrowserRouter>
+    <MotionConfig reducedMotion="user">
+      {/* History changes must commit promptly, including Back with a focused
+          mobile search field. Route chunks remain lazy under Suspense. */}
+      <BrowserRouter useTransitions={false}>
+        <LanguageProvider>
+          <ThemeProvider>
+            <App />
+          </ThemeProvider>
+        </LanguageProvider>
+      </BrowserRouter>
+    </MotionConfig>
   </StrictMode>
 )
 

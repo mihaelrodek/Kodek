@@ -1,10 +1,15 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none">
-  <rect width="1200" height="630" fill="#09090b" />
-  <circle cx="1000" cy="110" r="340" fill="#a855f7" opacity="0.18" />
-  <circle cx="160" cy="580" r="300" fill="#7e22ce" opacity="0.14" />
-  <rect x="90" y="232" width="60" height="6" rx="3" fill="#a855f7" />
-  <text x="90" y="320" font-family="Inter, system-ui, sans-serif" font-size="86" font-weight="700" fill="#fafafa">Mihael Rodek</text>
-  <text x="92" y="388" font-family="Inter, system-ui, sans-serif" font-size="38" font-weight="600" fill="#c084fc">Software Developer</text>
-  <text x="92" y="446" font-family="Inter, system-ui, sans-serif" font-size="28" font-weight="400" fill="#a1a1aa">Java &amp; Go backend &#183; React &amp; TypeScript frontend</text>
-  <text x="92" y="552" font-family="Inter, system-ui, sans-serif" font-size="22" font-weight="600" fill="#71717a" letter-spacing="6">A LIFE IN COMMITS.</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#f3f2f2"/>
+  <g opacity=".08" stroke="#15318f"><path d="M0 105H1200M0 210H1200M0 315H1200M0 420H1200M0 525H1200M150 0V630M300 0V630M450 0V630M600 0V630M750 0V630M900 0V630M1050 0V630"/></g>
+  <!-- Mark and wordmark follow export/svg/kodek-logo-light.svg: mark 93 : font-size 96, gap 10. -->
+  <g transform="translate(120 190) scale(1.55)">
+    <rect width="120" height="120" fill="#15318f"/>
+    <path d="M13.75 14H31.15V106H13.75Z" fill="#fff"/>
+    <path d="M38.75 60 82.25 14h15.3v9.2L62.75 60l43.5 46h-24Z" fill="#fff"/>
+    <path d="M39.55 14h31.2l-9.5 10h-21.7Z" fill="#4264e3"/>
+  </g>
+  <text x="326" y="356" fill="#201e1d" font-family="'Chakra Petch', sans-serif" font-size="192" font-weight="700">odek<tspan fill="#15318f">_</tspan></text>
+  <text x="124" y="456" fill="#15318f" font-family="'Geist Variable', Inter, system-ui, sans-serif" font-size="34" font-weight="600">Good ideas. Thoughtfully built.</text>
+  <text x="124" y="506" fill="#5a5856" font-family="'Geist Variable', Inter, system-ui, sans-serif" font-size="24">Custom web applications · Small-business websites · Personal portfolios</text>
+  <text x="124" y="566" fill="#8a8886" font-family="'Geist Variable', Inter, system-ui, sans-serif" font-size="20" font-weight="600" letter-spacing="5">KODEK.HR</text>
 </svg>

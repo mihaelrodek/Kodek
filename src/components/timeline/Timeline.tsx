@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, type RefObject } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
 import {
   AnimatePresence,
   motion,
@@ -27,7 +27,9 @@ function sortEvents(events: TimelineEvent[]): TimelineEvent[] {
 
 /**
  * Shared pin-scroll wiring for both timeline variants: tracks progress through
- * the runway section and maps it to the index of the active event.
+ * the runway section, maps it to the index of the active event, and exposes the
+ * inverse mapping (index → page scroll position) that the year rail, the mobile
+ * year strip and the keyboard handler all drive.
  */
 function useTimelineScroll(count: number) {
   const wrapperRef = useRef<HTMLElement>(null)
@@ -35,6 +37,7 @@ function useTimelineScroll(count: number) {
     target: wrapperRef,
     offset: ['start start', 'end end'],
   })
+  const reduced = useReducedMotion()
 
   const [active, setActive] = useState(0)
   useMotionValueEvent(scrollYProgress, 'change', (v) => {
@@ -44,7 +47,49 @@ function useTimelineScroll(count: number) {
     setActive(Math.floor(clamped * count))
   })
 
-  return { wrapperRef, scrollYProgress, active }
+  const scrollToIndex = useCallback(
+    (index: number) => {
+      const section = wrapperRef.current
+      if (!section) return
+      const i = Math.min(Math.max(index, 0), count - 1)
+      const rect = section.getBoundingClientRect()
+      const sectionTop = rect.top + window.scrollY
+      // Aim at the middle of the event's slice rather than its leading edge:
+      // the browser rounds the final scroll position, and landing a fraction of
+      // a pixel short of a boundary would select the previous event.
+      const progress = count === 1 ? 0 : (i + 0.5) / count
+      const target = sectionTop + (section.clientHeight - window.innerHeight) * progress
+      window.scrollTo({ top: target, behavior: reduced ? 'auto' : 'smooth' })
+    },
+    [count, reduced],
+  )
+
+  /**
+   * Arrow-key navigation. Attached to the timeline <section>, so it only fires
+   * while focus is inside the timeline — page scrolling elsewhere is untouched.
+   */
+  const onKeyDown = useCallback(
+    (event: KeyboardEvent<HTMLElement>) => {
+      // Never steal arrows from a control that uses them itself.
+      const target = event.target as HTMLElement | null
+      if (target?.closest('input, textarea, select, [contenteditable="true"]')) return
+
+      const back = event.key === 'ArrowLeft' || event.key === 'ArrowUp'
+      const forward = event.key === 'ArrowRight' || event.key === 'ArrowDown'
+      if (!back && !forward) return
+      const delta = back ? -1 : 1
+
+      const next = active + delta
+      // At either end, fall through to the browser so the user can keep
+      // scrolling out of the timeline.
+      if (next < 0 || next > count - 1) return
+      event.preventDefault()
+      scrollToIndex(next)
+    },
+    [active, count, scrollToIndex],
+  )
+
+  return { wrapperRef, scrollYProgress, active, scrollToIndex, onKeyDown }
 }
 
 export default function Timeline() {
@@ -59,7 +104,9 @@ export default function Timeline() {
 
 function PinnedTimeline({ events }: { events: TimelineEvent[] }) {
   const { t } = useTranslation()
-  const { wrapperRef, scrollYProgress, active } = useTimelineScroll(events.length)
+  const { wrapperRef, scrollYProgress, active, scrollToIndex, onKeyDown } = useTimelineScroll(
+    events.length,
+  )
   const reduced = useReducedMotion()
 
   const railY = useTransform(scrollYProgress, [0, 1], [0, -(events.length - 1) * RAIL_ITEM_HEIGHT])
@@ -68,6 +115,7 @@ function PinnedTimeline({ events }: { events: TimelineEvent[] }) {
     <section
       ref={wrapperRef}
       aria-label={t.timeline.ariaLabel}
+      onKeyDown={onKeyDown}
       style={{ height: `${events.length * SCROLL_PER_EVENT_VH_DESKTOP}vh` }}
       className="relative"
     >
@@ -89,7 +137,7 @@ function PinnedTimeline({ events }: { events: TimelineEvent[] }) {
           </div>
 
           <div className="absolute inset-y-0 right-6 flex items-center sm:right-10 lg:right-14">
-            <YearRail events={events} active={active} railY={railY} wrapperRef={wrapperRef} />
+            <YearRail events={events} active={active} railY={railY} scrollToIndex={scrollToIndex} />
           </div>
         </div>
       </div>
@@ -143,6 +191,12 @@ function renderImage(event: TimelineEvent, aspectClass: string, iconSize: number
       <img
         src={event.image}
         alt={event.imageAlt ?? event.title}
+        // The aspect class already reserves the box, but width/height give the
+        // browser an intrinsic ratio before CSS lands, so nothing shifts (CLS).
+        width={1600}
+        height={1200}
+        loading="lazy"
+        decoding="async"
         className={`${aspectClass} w-full rounded-2xl object-cover shadow-2xl shadow-zinc-900/10 dark:shadow-black/40`}
       />
     )
@@ -150,7 +204,7 @@ function renderImage(event: TimelineEvent, aspectClass: string, iconSize: number
   return (
     <div
       aria-hidden="true"
-      className={`${aspectClass} flex w-full items-center justify-center rounded-2xl bg-gradient-to-br from-zinc-100 to-zinc-200 text-zinc-400 shadow-2xl shadow-zinc-900/10 dark:from-zinc-800 dark:to-zinc-900 dark:text-zinc-600 dark:shadow-black/40`}
+      className={`${aspectClass} flex w-full items-center justify-center rounded-2xl bg-gradient-to-br from-zinc-100 to-zinc-200 text-zinc-500 shadow-2xl shadow-zinc-900/10 dark:from-zinc-800 dark:to-zinc-900 dark:text-zinc-400 dark:shadow-black/40`}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -205,23 +259,12 @@ interface YearRailProps {
   events: TimelineEvent[]
   active: number
   railY: MotionValue<number>
-  /** The runway <section> — scroll target for the year buttons. */
-  wrapperRef: RefObject<HTMLElement | null>
+  /** Scrolls the page to an event's slice of the runway. */
+  scrollToIndex: (index: number) => void
 }
 
-function YearRail({ events, active, railY, wrapperRef }: YearRailProps) {
+function YearRail({ events, active, railY, scrollToIndex }: YearRailProps) {
   const { lang } = useTranslation()
-  const reduced = useReducedMotion()
-
-  const scrollToIndex = (index: number) => {
-    const section = wrapperRef.current
-    if (!section) return
-    const rect = section.getBoundingClientRect()
-    const sectionTop = rect.top + window.scrollY
-    const progress = events.length === 1 ? 0 : index / events.length
-    const target = sectionTop + (section.clientHeight - window.innerHeight) * progress
-    window.scrollTo({ top: target, behavior: reduced ? 'auto' : 'smooth' })
-  }
 
   return (
     <div className="relative h-[70vh] max-h-[640px] w-48 lg:w-56 xl:w-64">
@@ -247,10 +290,12 @@ function YearRail({ events, active, railY, wrapperRef }: YearRailProps) {
                     'group flex h-full w-full items-center justify-end gap-4 pr-1 text-right transition',
                     isActive
                       ? 'text-zinc-900 dark:text-zinc-50'
-                      : 'text-zinc-400 hover:text-zinc-600 dark:text-zinc-600 dark:hover:text-zinc-400',
+                      : 'text-zinc-500 hover:text-zinc-600 dark:text-zinc-400 dark:hover:text-zinc-400',
                   ].join(' ')}
                 >
-                  <div className="flex flex-col items-end leading-tight">
+                  {/* max-w + min-w-0 give the truncating title a width to
+                      truncate against — `items-end` alone sizes it to content. */}
+                  <div className="flex max-w-[9rem] min-w-0 flex-col items-end leading-tight lg:max-w-[11rem]">
                     <span
                       className={[
                         'text-sm font-semibold tabular-nums',
@@ -261,10 +306,10 @@ function YearRail({ events, active, railY, wrapperRef }: YearRailProps) {
                     </span>
                     <span
                       className={[
-                        'truncate text-xs',
+                        'max-w-full truncate text-xs',
                         isActive
                           ? 'text-zinc-700 dark:text-zinc-300'
-                          : 'text-zinc-400 dark:text-zinc-600',
+                          : 'text-zinc-500 dark:text-zinc-400',
                       ].join(' ')}
                     >
                       {localized(lang, event.title, event.titleHr)}
@@ -294,26 +339,46 @@ function YearRail({ events, active, railY, wrapperRef }: YearRailProps) {
 
 function MobilePinnedTimeline({ events }: { events: TimelineEvent[] }) {
   const { t } = useTranslation()
-  const { wrapperRef, scrollYProgress, active } = useTimelineScroll(events.length)
+  const { wrapperRef, scrollYProgress, active, scrollToIndex, onKeyDown } = useTimelineScroll(
+    events.length,
+  )
   const reduced = useReducedMotion()
 
   // Progress through the timeline section (0 → 1), used to drive the
   // horizontal "fill" of the year strip.
   const progress = scrollYProgress
 
+  // Tall events (image + tags + milestones) don't fit a phone viewport, so the
+  // pinned panel scrolls internally; `overscroll-contain` keeps that from
+  // chaining into the page scroll (which would advance the pinned timeline).
+  const contentRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    // A new event starts at its top, not wherever the previous one was left.
+    contentRef.current?.scrollTo({ top: 0 })
+  }, [active])
+
   return (
     <section
       ref={wrapperRef}
       aria-label={t.timeline.ariaLabel}
+      onKeyDown={onKeyDown}
       style={{ height: `${events.length * SCROLL_PER_EVENT_VH_MOBILE}vh` }}
       className="relative"
     >
       <div className="sticky top-14 flex h-[calc(100svh-3.5rem)] flex-col overflow-hidden bg-white sm:top-16 sm:h-[calc(100svh-4rem)] dark:bg-zinc-950">
         {/* Year strip — fixed at top */}
-        <YearStrip events={events} active={active} progress={progress} />
+        <YearStrip
+          events={events}
+          active={active}
+          progress={progress}
+          scrollToIndex={scrollToIndex}
+        />
 
-        {/* Content — animated crossfade */}
-        <div className="flex flex-1 items-start overflow-hidden px-5 pt-3 pb-6">
+        {/* Content — animated crossfade, scrollable when it overflows */}
+        <div
+          ref={contentRef}
+          className="flex-1 overflow-x-hidden overflow-y-auto overscroll-contain px-5 pt-3 pb-6"
+        >
           <AnimatePresence mode="popLayout">
             <motion.div
               key={events[active].id}
@@ -336,9 +401,11 @@ interface YearStripProps {
   events: TimelineEvent[]
   active: number
   progress: MotionValue<number>
+  /** Scrolls the page to an event's slice of the runway. */
+  scrollToIndex: (index: number) => void
 }
 
-function YearStrip({ events, active, progress }: YearStripProps) {
+function YearStrip({ events, active, progress, scrollToIndex }: YearStripProps) {
   const { lang } = useTranslation()
   const fillWidth = useTransform(progress, [0, 1], ['0%', '100%'])
   return (
@@ -362,23 +429,37 @@ function YearStrip({ events, active, progress }: YearStripProps) {
             const isPast = i < active
             return (
               <li key={event.id}>
-                <span
-                  aria-hidden="true"
-                  className={[
-                    'block rounded-full ring-2 ring-white transition-all duration-300 dark:ring-zinc-950',
-                    isActive
-                      ? 'bg-accent-500 h-3 w-3'
-                      : isPast
-                        ? 'bg-accent-500 h-2 w-2'
-                        : 'h-2 w-2 bg-zinc-300 dark:bg-zinc-700',
-                  ].join(' ')}
-                />
+                {/* The dot itself is tiny; the button pads it out to a usable
+                    touch target without moving the dot off the track. */}
+                <button
+                  type="button"
+                  onClick={() => scrollToIndex(i)}
+                  aria-current={isActive ? 'true' : undefined}
+                  aria-label={`${localized(lang, event.year, event.yearHr)} — ${localized(
+                    lang,
+                    event.title,
+                    event.titleHr,
+                  )}`}
+                  className="focus-visible:outline-accent-500 -m-2.5 flex h-7 w-7 items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2"
+                >
+                  <span
+                    aria-hidden="true"
+                    className={[
+                      'block rounded-full ring-2 ring-white transition-all duration-300 dark:ring-zinc-950',
+                      isActive
+                        ? 'bg-accent-500 h-3 w-3'
+                        : isPast
+                          ? 'bg-accent-500 h-2 w-2'
+                          : 'h-2 w-2 bg-zinc-300 dark:bg-zinc-700',
+                    ].join(' ')}
+                  />
+                </button>
               </li>
             )
           })}
         </ol>
       </div>
-      <div className="mt-2 flex items-center justify-between text-[10px] font-medium text-zinc-400 tabular-nums dark:text-zinc-600">
+      <div className="mt-2 flex items-center justify-between text-[10px] font-medium text-zinc-500 tabular-nums dark:text-zinc-400">
         <span className="text-accent-600 dark:text-accent-400">{events[0].sortYear}</span>
         <span className="text-zinc-500 dark:text-zinc-400">
           {localized(lang, events[active].year, events[active].yearHr)}
@@ -393,7 +474,11 @@ function MobileEventContent({ event }: { event: TimelineEvent }) {
   const { lang } = useTranslation()
   return (
     <div className="space-y-4">
-      {renderImage(event, 'aspect-[16/10]', 48)}
+      {/* Short viewports (small phones, landscape) drop the image entirely so
+          the text starts in view; taller ones get a shallow 2:1 crop. */}
+      <div className="hidden [@media(min-height:600px)]:block">
+        {renderImage(event, 'aspect-[2/1]', 40)}
+      </div>
 
       <div>
         <p className="text-accent-600 dark:text-accent-400 text-[11px] font-semibold tracking-[0.2em] uppercase">

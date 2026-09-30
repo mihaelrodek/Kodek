@@ -20,34 +20,34 @@ const ROUTES = [
   {
     path: '/',
     file: 'index.html',
-    title: 'Mihael Rodek — Portfolio',
+    title: 'Kodek — Custom software and websites',
     description:
-      'Mihael Rodek — software developer. Java & Go backend, React & TypeScript frontend. Full-stack work across banking and public-sector projects.',
+      'Kodek builds thoughtful custom web applications, small-business websites, and personal portfolios from Croatia.',
   },
   {
     path: '/about',
     file: 'about.html',
-    title: 'About — Mihael Rodek',
-    description:
-      'Who I am — software developer from Croatia. Java & Go backend, React & TypeScript frontend.',
+    title: 'About Mihael Rodek — Founder of Kodek',
+    description: 'Meet Mihael Rodek, the software developer and founder behind Kodek.',
   },
   {
     path: '/projects',
     file: 'projects.html',
-    title: 'Projects — Mihael Rodek',
+    title: 'Work — Kodek',
     description:
-      'Selected projects by Mihael Rodek — open source, Android, backend, IoT, and academic work.',
+      'Selected software, web, mobile, and open-source work by Kodek and its founder, Mihael Rodek.',
   },
   {
     path: '/contact',
     file: 'contact.html',
-    title: 'Contact — Mihael Rodek',
-    description: 'Get in touch with Mihael Rodek — email, GitHub, LinkedIn, or the contact form.',
+    title: 'Request a quote — Kodek',
+    description:
+      'Tell Kodek about your next web application, business website, or personal portfolio project.',
   },
   {
     path: '/404',
     file: '404.html',
-    title: 'Page not found — Mihael Rodek',
+    title: 'Page not found — Kodek',
     description: 'This page does not exist.',
     noindex: true,
   },
@@ -61,8 +61,8 @@ if (!template.includes(ROOT_DIV)) {
   throw new Error(`prerender: "${ROOT_DIV}" not found in dist/index.html`)
 }
 
-// Site origin taken from the template's canonical tag — works both before and
-// after the __SITE_URL__ placeholder is replaced with the real domain.
+// Site origin taken from the template's canonical tag, keeping canonical URLs
+// and the generated sitemap aligned with the deployed Kodek domain.
 const canonicalMatch = template.match(/rel="canonical" href="(.+?)\/?"/)
 if (!canonicalMatch) {
   throw new Error('prerender: canonical link not found in dist/index.html')
@@ -83,6 +83,9 @@ function set(html, pattern, value) {
 
 for (const route of ROUTES) {
   const appHtml = await render(route.path)
+  if (appHtml.includes('<script') || appHtml.includes('<!--$?-->')) {
+    throw new Error(`prerender: unfinished or scripted route markup for ${route.path}`)
+  }
   const url = route.path === '/' ? `${siteUrl}/` : `${siteUrl}${route.path}`
 
   let html = template
@@ -121,6 +124,20 @@ if (!headersFile.includes('__CSP_SCRIPT_HASHES__')) {
 }
 await writeFile(headersPath, headersFile.replaceAll('__CSP_SCRIPT_HASHES__', scriptHashes), 'utf8')
 console.log(`CSP hashes for ${inlineScripts.length} inline script(s) -> _headers`)
+
+// Sitemap: one entry per indexable route (skips `noindex` routes, e.g. 404),
+// using the same site origin as the canonical tags above and a single
+// lastmod (the build date) for every URL.
+const lastmod = new Date().toISOString().slice(0, 10)
+const sitemapUrls = ROUTES.filter((route) => !route.noindex)
+  .map((route) => {
+    const url = route.path === '/' ? `${siteUrl}/` : `${siteUrl}${route.path}`
+    return `  <url>\n    <loc>${url}</loc>\n    <lastmod>${lastmod}</lastmod>\n  </url>`
+  })
+  .join('\n')
+const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemapUrls}\n</urlset>\n`
+await writeFile(join(dist, 'sitemap.xml'), sitemap, 'utf8')
+console.log(`sitemap.xml -> ${ROUTES.filter((route) => !route.noindex).length} url(s)`)
 
 // The SSR bundle is a build artifact — don't ship it to the CDN.
 await rm(join(dist, 'server'), { recursive: true, force: true })

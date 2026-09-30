@@ -1,0 +1,19 @@
+:root {
+  /* Kodek boje */
+  --kodek-navy: #15318f;   /* primarna: pozadina znaka */
+  --kodek-blue: #4264e3;   /* akcent: kosa crtica, _ na tamnoj podlozi, linkovi/hover */
+  --kodek-ink: #201e1d;     /* tekst na svijetloj podlozi */
+  --kodek-paper: #f3f2f2; /* svijetla podloga / tekst na tamnoj */
+  --kodek-white: #ffffff;
+
+  /* Tipografija */
+  --kodek-font-logo: 'Chakra Petch', sans-serif; /* samo 700, za logo i naslove */
+}
+
+@font-face {
+  font-family: 'Chakra Petch';
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  src: url('../fonts/ChakraPetch-Bold.ttf') format('truetype');
+}

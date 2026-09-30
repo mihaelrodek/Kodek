@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="hr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Kodek badge – demo</title>
+    <script src="kodek-badge.js" defer></script>
+    <style>
+      body {
+        margin: 0;
+        font:
+          16px/1.6 system-ui,
+          sans-serif;
+      }
+      main {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 48px 16px;
+      }
+      section {
+        margin: 32px 0;
+      }
+      .dark {
+        padding: 24px;
+        background: #111;
+        color: #eee;
+      }
+      .filler {
+        height: 120vh;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Kodek badge</h1>
+
+      <section>
+        <h2>static, light</h2>
+        <kodek-badge mode="static" theme="light"></kodek-badge>
+      </section>
+
+      <section>
+        <h2>static, dark, desno</h2>
+        <kodek-badge mode="static" theme="dark" align="right"></kodek-badge>
+      </section>
+
+      <section>
+        <h2>inline u postojećem footeru</h2>
+        <p>© 2026 Klijent d.o.o. <kodek-badge mode="inline" theme="light"></kodek-badge></p>
+        <p class="dark">
+          © 2026 Klijent d.o.o.
+          <kodek-badge mode="inline" theme="dark" lang="en"></kodek-badge>
+        </p>
+      </section>
+
+      <section>
+        <h2>samo logo</h2>
+        <kodek-badge mode="inline" theme="light" label=""></kodek-badge>
+      </section>
+
+      <div class="filler">Skrolaj – sticky traka ostaje na dnu.</div>
+    </main>
+
+    <kodek-badge></kodek-badge>
+  </body>
+</html>

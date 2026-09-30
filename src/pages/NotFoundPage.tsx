@@ -10,7 +10,7 @@ export default function NotFoundPage() {
       <p className="mt-4 text-zinc-600 dark:text-zinc-400">{t.notFound.body}</p>
       <Link
         to="/"
-        className="bg-accent-600 hover:bg-accent-700 mt-6 rounded-md px-4 py-2 text-sm font-medium text-white transition"
+        className="focus-ring bg-accent-600 hover:bg-accent-700 mt-6 rounded-md px-4 py-2 text-sm font-medium text-white transition"
       >
         {t.notFound.back}
       </Link>

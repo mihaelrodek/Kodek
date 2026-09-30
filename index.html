@@ -2,7 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Apply the saved/system theme before first paint to avoid a flash of
@@ -11,75 +14,101 @@
       (function () {
         try {
           var stored = localStorage.getItem('portfolio-theme')
-          var dark =
-            stored === 'dark' ||
-            (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches)
-          if (dark) document.documentElement.classList.add('dark')
-        } catch (e) {}
+          // Dark is the brand default; only an explicit light choice opts out.
+          if (stored !== 'light') document.documentElement.classList.add('dark')
+        } catch (e) {
+          document.documentElement.classList.add('dark')
+        }
       })()
     </script>
 
-    <title>Mihael Rodek — Portfolio</title>
+    <title>Kodek — Custom software and websites</title>
     <meta
       name="description"
-      content="Mihael Rodek — software developer. Java & Go backend, React & TypeScript frontend. Full-stack work across banking and public-sector projects."
+      content="Kodek builds thoughtful custom web applications, small-business websites, and personal portfolios from Croatia."
     />
-    <meta name="author" content="Mihael Rodek" />
+    <meta name="author" content="Kodek, vl. Mihael Rodek" />
     <meta name="robots" content="index, follow" />
-    <link rel="canonical" href="__SITE_URL__/" />
+    <link rel="canonical" href="https://kodek.hr/" />
 
     <!-- Browser UI color -->
-    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#15318f" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Mihael Rodek" />
-    <meta property="og:title" content="Mihael Rodek — Portfolio" />
+    <meta property="og:site_name" content="Kodek" />
+    <meta property="og:title" content="Kodek — Custom software and websites" />
     <meta
       property="og:description"
-      content="Software developer. Java & Go backend, React & TypeScript frontend. A life in commits — scroll through it."
+      content="Thoughtful custom web applications, small-business websites, and personal portfolios."
     />
-    <meta property="og:url" content="__SITE_URL__/" />
-    <meta property="og:image" content="__SITE_URL__/og.png" />
+    <meta property="og:url" content="https://kodek.hr/" />
+    <meta property="og:image" content="https://kodek.hr/og.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Mihael Rodek — Portfolio" />
+    <meta property="og:image:alt" content="Kodek — Good ideas. Thoughtfully built." />
     <meta property="og:locale" content="en_US" />
     <meta property="og:locale:alternate" content="hr_HR" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Mihael Rodek — Portfolio" />
+    <meta name="twitter:title" content="Kodek — Custom software and websites" />
     <meta
       name="twitter:description"
-      content="Software developer. Java & Go backend, React & TypeScript frontend."
+      content="Thoughtful custom web applications, small-business websites, and personal portfolios."
     />
-    <meta name="twitter:image" content="__SITE_URL__/og.png" />
+    <meta name="twitter:image" content="https://kodek.hr/og.png" />
+    <meta name="twitter:image:alt" content="Kodek — Good ideas. Thoughtfully built." />
 
     <!-- Structured data for search engines. A data block (type="application/ld+json")
          is never executed, so it needs no CSP hash. -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "Person",
-        "name": "Mihael Rodek",
-        "jobTitle": "Software Developer",
-        "url": "__SITE_URL__/",
-        "email": "mailto:mihael.rodek1@gmail.com",
-        "sameAs": [
-          "https://github.com/mihaelrodek",
-          "https://linkedin.com/in/mihaelrodek"
-        ],
-        "worksFor": {
-          "@type": "Organization",
-          "name": "True North"
-        },
-        "alumniOf": {
-          "@type": "CollegeOrUniversity",
-          "name": "Faculty of Electrical Engineering and Computing, University of Zagreb"
-        },
-        "knowsAbout": ["Java", "Go", "React", "TypeScript", "Spring Boot", "Android", "Kubernetes"]
+        "@graph": [
+          {
+            "@type": "ProfessionalService",
+            "@id": "https://kodek.hr/#business",
+            "name": "Kodek",
+            "legalName": "Kodek, obrt za računalno programiranje i ostale usluge",
+            "taxID": "58118867613",
+            "url": "https://kodek.hr/",
+            "logo": "https://kodek.hr/brand/kodek-mark-blue.svg",
+            "image": "https://kodek.hr/og.png",
+            "email": "mailto:mihael.rodek1@gmail.com",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "Kamenica 35 K",
+              "postalCode": "42250",
+              "addressLocality": "Kamenica",
+              "addressCountry": "HR"
+            },
+            "areaServed": {
+              "@type": "Country",
+              "name": "Croatia"
+            },
+            "founder": {
+              "@id": "https://kodek.hr/about#mihael-rodek"
+            }
+          },
+          {
+            "@type": "Person",
+            "@id": "https://kodek.hr/about#mihael-rodek",
+            "name": "Mihael Rodek",
+            "url": "https://kodek.hr/about",
+            "mainEntityOfPage": "https://kodek.hr/about",
+            "jobTitle": "Software Developer",
+            "email": "mailto:mihael.rodek1@gmail.com",
+            "worksFor": {
+              "@id": "https://kodek.hr/#business"
+            },
+            "sameAs": [
+              "https://github.com/mihaelrodek",
+              "https://linkedin.com/in/mihaelrodek"
+            ],
+            "knowsAbout": ["Java", "Go", "React", "TypeScript", "Spring Boot", "Android", "Kubernetes"]
+          }
+        ]
       }
     </script>
   </head>
