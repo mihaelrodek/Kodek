@@ -4,7 +4,8 @@
  * `vite preview` cannot be used here: its SPA fallback answers every unknown
  * URL with the prerendered *home* page, which both hides the 404 page and
  * causes a hydration mismatch (the router renders NotFound over home markup).
- * This server mimics how Cloudflare Pages serves the build instead:
+ * This server mimics how Cloudflare Workers Static Assets serves the build
+ * (worker/index.ts + wrangler.jsonc) instead:
  *
  *   /            -> index.html
  *   /about       -> about.html          (extensionless lookup)
@@ -81,7 +82,7 @@ function resolveFile(pathname) {
 
 const server = createServer((req, res) => {
   // Exercise the actual build's CSP, including its theme-script hash. Otherwise
-  // blocked inline reveal scripts could pass local tests and fail on Pages.
+  // blocked inline reveal scripts could pass local tests and fail in production.
   const policy = readFileSync(join(dist, '_headers'), 'utf8').match(
     /^\s+Content-Security-Policy: (.+)$/m,
   )?.[1]

@@ -41,6 +41,9 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Validate Worker config
+        run: npx wrangler deploy --dry-run
+
       - name: Install Playwright chromium
         run: npx playwright install --with-deps chromium
 

@@ -1,9 +1,10 @@
 /**
- * Cloudflare Pages Function — contact form proxy.
+ * Contact form proxy — the only server-side code, run by the Worker in
+ * worker/index.ts for `POST /api/contact`.
  *
- * Holds the Web3Forms access key server-side (set WEB3FORMS_ACCESS_KEY as an
- * encrypted env var in the Pages project) so it never ships in the client
- * bundle. Validates input, honors the honeypot, then forwards to Web3Forms.
+ * Holds the Web3Forms access key server-side (WEB3FORMS_ACCESS_KEY is a
+ * Worker secret) so it never ships in the client bundle. Validates input,
+ * honors the honeypot, then forwards to Web3Forms.
  *
  * Responses are deliberately opaque: `{ success: true }` on success, otherwise
  * `{ success: false, code }` with a stable machine code the client maps to a
@@ -11,9 +12,12 @@
  * — it is not localized and may leak provider detail. The English `message`
  * field is kept for curl users only; the client must not display it.
  *
- * Local dev: runs under `wrangler pages dev` (plain `vite dev` does not serve
- * /functions). See README.
+ * Local dev: `npm run dev:worker` (plain `vite dev` has no /api). See README.
  */
+
+export interface ContactEnv {
+  WEB3FORMS_ACCESS_KEY?: string
+}
 
 interface ContactBody {
   name?: string
@@ -90,12 +94,7 @@ function fail(code: ErrorCode): Response {
   return json({ success: false, code, message: ERROR_MESSAGE[code] }, ERROR_STATUS[code])
 }
 
-export const onRequestPost = async (context: {
-  request: Request
-  env: { WEB3FORMS_ACCESS_KEY?: string }
-}): Promise<Response> => {
-  const { request, env } = context
-
+export async function handleContact(request: Request, env: ContactEnv): Promise<Response> {
   if (!env.WEB3FORMS_ACCESS_KEY) return fail('not_configured')
 
   const ip = request.headers.get('CF-Connecting-IP') ?? 'unknown'

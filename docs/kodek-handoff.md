@@ -10,7 +10,7 @@ nothing was committed, pushed, or deployed.
 - `/about`: the former personal hero, complete timeline, biography, CV, and skills.
 - `/projects`: Work / Radovi, preserving filters, sorting, URL state, and project history.
 - `/contact`: business inquiry copy using `info@kodek.hr`. The contact API contract
-  and `functions/api/contact.ts` behavior were not changed by this task.
+  and the contact proxy (now `worker/contact.ts`) behavior were not changed by this task.
 - Kodek wordmark, geometric K artwork, mobile Sheet navigation, legal business footer,
   English/Croatian copy, light/dark themes, self-hosted Geist, and reduced-motion behavior.
 - Business SEO, canonical URLs, sitemap metadata, ProfessionalService JSON-LD with linked
@@ -94,5 +94,5 @@ concurrent mobile repetitions.
   when factual descriptions and publishable assets are available.
 - No email/service placeholders remain. The founder portrait uses initials intentionally;
   a real portrait is optional. Phone is omitted as the brief allows.
-- Contact delivery still uses the existing Cloudflare Pages/Web3Forms configuration.
+- Contact delivery uses the Worker + Web3Forms configuration (see README).
   Validation uses the automated API/form tests; no live inquiry was sent.

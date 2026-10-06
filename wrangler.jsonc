@@ -1,0 +1,26 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "kodek",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-10-01",
+  "observability": { "enabled": true },
+  "assets": {
+    // `npm run build` writes the prerendered site here (scripts/prerender.mjs).
+    "directory": "./dist",
+    "binding": "ASSETS",
+    // `/about` serves about.html; `/about.html` and `/about/` redirect to `/about`.
+    "html_handling": "auto-trailing-slash",
+    // Unknown URLs get dist/404.html with a real 404 status (no SPA fallback).
+    "not_found_handling": "404-page",
+    // The Worker sees every request first: www redirect and /api/contact.
+    "run_worker_first": true
+  },
+  // Deploying attaches these hostnames to the Worker and creates their DNS
+  // records in the kodek.hr zone (the zone must already be on this account).
+  "routes": [
+    { "pattern": "kodek.hr", "custom_domain": true },
+    { "pattern": "www.kodek.hr", "custom_domain": true }
+  ]
+  // Secrets (not in this file): WEB3FORMS_ACCESS_KEY — `npx wrangler secret put
+  // WEB3FORMS_ACCESS_KEY` or the dashboard; locally in .dev.vars.
+}

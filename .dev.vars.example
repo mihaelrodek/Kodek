@@ -1,0 +1,15 @@
+# Web3Forms access key for the contact form.
+#
+# Read SERVER-SIDE by the Worker (worker/contact.ts) — never exposed to the
+# browser, so there is no VITE_ prefix.
+#
+# Get one free at https://web3forms.com (create a form with info@kodek.hr as the
+# delivery address and copy its access key).
+#
+# Local dev:   cp .dev.vars.example .dev.vars, paste the key, then
+#              npm run dev:worker   (builds dist/ and runs `wrangler dev`)
+#              Plain `vite dev` does NOT serve /api/contact.
+#
+# Production:  npx wrangler secret put WEB3FORMS_ACCESS_KEY
+#              or Workers & Pages -> kodek -> Settings -> Variables and Secrets.
+WEB3FORMS_ACCESS_KEY=

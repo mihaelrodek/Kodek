@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { onRequestPost } from '../../functions/api/contact'
+import { handleContact } from '../../worker/contact'
 
 interface Env {
   WEB3FORMS_ACCESS_KEY?: string
@@ -47,11 +47,11 @@ afterEach(() => {
   vi.unstubAllGlobals()
 })
 
-describe('onRequestPost', () => {
+describe('handleContact', () => {
   it('returns 500 when WEB3FORMS_ACCESS_KEY is missing', async () => {
     const fetchMock = mockFetch(() => new Response('{}', { status: 200 }))
 
-    const res = await onRequestPost({ request: post(valid), env: {} as Env })
+    const res = await handleContact(post(valid), {} as Env)
 
     expect(res.status).toBe(500)
     await expect(res.json()).resolves.toMatchObject({ success: false, code: 'not_configured' })
@@ -61,9 +61,8 @@ describe('onRequestPost', () => {
   it('accepts a honeypot submission without forwarding it', async () => {
     const fetchMock = mockFetch(() => new Response('{}', { status: 200 }))
 
-    const res = await onRequestPost({
-      request: post({ ...valid, botcheck: 'i am a bot' }),
-      env: { WEB3FORMS_ACCESS_KEY: KEY },
+    const res = await handleContact(post({ ...valid, botcheck: 'i am a bot' }), {
+      WEB3FORMS_ACCESS_KEY: KEY,
     })
 
     expect(res.status).toBe(200)
@@ -74,9 +73,8 @@ describe('onRequestPost', () => {
   it('returns 400 when the body is not JSON', async () => {
     const fetchMock = mockFetch(() => new Response('{}', { status: 200 }))
 
-    const res = await onRequestPost({
-      request: post(null, { raw: 'not json at all' }),
-      env: { WEB3FORMS_ACCESS_KEY: KEY },
+    const res = await handleContact(post(null, { raw: 'not json at all' }), {
+      WEB3FORMS_ACCESS_KEY: KEY,
     })
 
     expect(res.status).toBe(400)
@@ -95,10 +93,7 @@ describe('onRequestPost', () => {
   ])('returns 422 for %s', async (_label, body) => {
     const fetchMock = mockFetch(() => new Response('{}', { status: 200 }))
 
-    const res = await onRequestPost({
-      request: post(body),
-      env: { WEB3FORMS_ACCESS_KEY: KEY },
-    })
+    const res = await handleContact(post(body), { WEB3FORMS_ACCESS_KEY: KEY })
 
     expect(res.status).toBe(422)
     await expect(res.json()).resolves.toMatchObject({ success: false, code: 'validation' })
@@ -110,10 +105,7 @@ describe('onRequestPost', () => {
       () => new Response(JSON.stringify({ success: true, message: 'Email sent' }), { status: 200 }),
     )
 
-    const res = await onRequestPost({
-      request: post(valid),
-      env: { WEB3FORMS_ACCESS_KEY: KEY },
-    })
+    const res = await handleContact(post(valid), { WEB3FORMS_ACCESS_KEY: KEY })
 
     expect(res.status).toBe(200)
     expect(res.headers.get('Content-Type')).toBe('application/json')
@@ -140,10 +132,7 @@ describe('onRequestPost', () => {
       () => new Response(JSON.stringify({ success: true }), { status: 200 }),
     )
 
-    const res = await onRequestPost({
-      request: post(valid),
-      env: { WEB3FORMS_ACCESS_KEY: KEY },
-    })
+    const res = await handleContact(post(valid), { WEB3FORMS_ACCESS_KEY: KEY })
 
     expect(await res.text()).not.toContain(KEY)
     expect(fetchMock).toHaveBeenCalledTimes(1)
@@ -159,10 +148,7 @@ describe('onRequestPost', () => {
           }),
       )
 
-      const res = await onRequestPost({
-        request: post(valid),
-        env: { WEB3FORMS_ACCESS_KEY: KEY },
-      })
+      const res = await handleContact(post(valid), { WEB3FORMS_ACCESS_KEY: KEY })
 
       // The upstream status and body are collapsed into one opaque failure.
       expect(res.status).toBe(502)
@@ -176,10 +162,7 @@ describe('onRequestPost', () => {
     const fetchMock = vi.fn(() => Promise.reject(new Error('getaddrinfo ENOTFOUND')))
     vi.stubGlobal('fetch', fetchMock)
 
-    const res = await onRequestPost({
-      request: post(valid),
-      env: { WEB3FORMS_ACCESS_KEY: KEY },
-    })
+    const res = await handleContact(post(valid), { WEB3FORMS_ACCESS_KEY: KEY })
 
     expect(res.status).toBe(502)
     await expect(res.json()).resolves.toMatchObject({ success: false, code: 'upstream' })
@@ -191,17 +174,11 @@ describe('onRequestPost', () => {
     mockFetch(() => new Response(JSON.stringify({ success: true }), { status: 200 }))
 
     for (let i = 0; i < 5; i += 1) {
-      const ok = await onRequestPost({
-        request: post(valid, { ip }),
-        env: { WEB3FORMS_ACCESS_KEY: KEY },
-      })
+      const ok = await handleContact(post(valid, { ip }), { WEB3FORMS_ACCESS_KEY: KEY })
       expect(ok.status).toBe(200)
     }
 
-    const limited = await onRequestPost({
-      request: post(valid, { ip }),
-      env: { WEB3FORMS_ACCESS_KEY: KEY },
-    })
+    const limited = await handleContact(post(valid, { ip }), { WEB3FORMS_ACCESS_KEY: KEY })
     expect(limited.status).toBe(429)
     await expect(limited.json()).resolves.toMatchObject({
       success: false,

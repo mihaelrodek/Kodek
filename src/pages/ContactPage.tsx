@@ -5,12 +5,12 @@ import { business } from '../data/business'
 import { useTranslation } from '../hooks/useTranslation'
 import type { Translations } from '../i18n/translations'
 
-// Posts to a Cloudflare Pages Function (functions/api/contact.ts) which holds
+// Posts to the Worker (worker/index.ts → worker/contact.ts) which holds
 // the Web3Forms key server-side and proxies the submission.
 const CONTACT_ENDPOINT = '/api/contact'
 
 /**
- * Machine codes returned by functions/api/contact.ts. The server never sends
+ * Machine codes returned by worker/contact.ts. The server never sends
  * user-facing copy — its English `message` field exists for curl users only —
  * so everything shown here comes from the translation dictionary.
  */
@@ -244,7 +244,7 @@ export default function ContactPage() {
             aria-hidden="true"
           />
 
-          {/* maxLength values mirror the server-side caps in functions/api/contact.ts */}
+          {/* maxLength values mirror the server-side caps in worker/contact.ts */}
           <Field
             id="name"
             label={t.contact.fields.name}

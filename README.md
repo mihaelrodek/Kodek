@@ -3,7 +3,7 @@
 Landing site for **Kodek, obrt za računalno programiranje i ostale usluge**. Kodek builds custom
 web applications, small-business websites, and personal portfolios. The founder's prior work and
 background live on `/about` and `/projects`. The site uses React 19 + TypeScript + Vite, Tailwind
-CSS v4, and Framer Motion, and deploys to Cloudflare Pages.
+CSS v4, and Framer Motion, and deploys to Cloudflare Workers (static assets + one Worker).
 
 Business details: Kodek, vl. Mihael Rodek · Kamenica 35 K, 42250 Kamenica, Croatia · OIB
 58118867613 · [info@kodek.hr](mailto:info@kodek.hr)
@@ -26,9 +26,10 @@ Business details: Kodek, vl. Mihael Rodek · Kamenica 35 K, 42250 Kamenica, Croa
 npm install
 npm run dev      # start dev server on http://localhost:5174
 npm run build    # type-check + production build to dist/
-npm run preview  # serve the production build locally
+npm run preview  # serve the production build locally (static only, no /api)
+npm run dev:worker  # build, then run the real Worker + assets locally with wrangler dev
 npm run lint     # run eslint
-npm run format   # run prettier on src/, functions/ and scripts/
+npm run format   # run prettier on src/, worker/ and scripts/
 ```
 
 Dev server uses `strictPort: true`, so it fails if port 5174 is already in use.
@@ -44,8 +45,10 @@ npm run typecheck     # TypeScript type checking
 ## Project structure
 
 ```
-functions/
-  api/contact.ts       Cloudflare Pages Function — contact form proxy
+worker/
+  index.ts             Cloudflare Worker: www redirect, /api/contact, else static assets
+  contact.ts           contact form proxy (Web3Forms)
+wrangler.jsonc         Worker + static assets config (routing, 404 page, custom domains)
 scripts/
   prerender.mjs        post-build prerender (static HTML + per-route meta + CSP hashes)
   cv.html              CV source — regenerates public/cv.pdf (see "CV" below)
@@ -72,23 +75,22 @@ The `@/` import alias resolves to `src/` (configured in `vite.config.ts` and `ts
 
 ## Contact form
 
-The `/contact` page posts to a **Cloudflare Pages Function** (`functions/api/contact.ts`), which
+The `/contact` page posts to the **Worker** (`worker/index.ts` → `worker/contact.ts`), which
 holds the [Web3Forms](https://web3forms.com) access key server-side and forwards an enquiry to
 the business email. The key never ships in the client bundle. To wire it up:
 
-1. Go to https://web3forms.com, enter `info@kodek.hr`, confirm via the email Web3Forms
-   sends, and copy the access key.
-2. In production: add `WEB3FORMS_ACCESS_KEY` (no `VITE_` prefix) to the Cloudflare Pages project
-   environment variables (Settings → Environment variables, mark it encrypted), then redeploy.
-3. Locally: `cp .env.example .env.local`, paste the key, then run the Function with
-   `npm run build && npx wrangler pages dev dist`. Plain `vite dev` does not serve `/functions`,
-   so `/api/contact` returns 404 under it.
+1. Go to https://web3forms.com, create a form with `info@kodek.hr` as the delivery address,
+   and copy its access key.
+2. In production: `npx wrangler secret put WEB3FORMS_ACCESS_KEY` (or Workers & Pages → kodek →
+   Settings → Variables and Secrets, type Secret), then redeploy.
+3. Locally: `cp .dev.vars.example .dev.vars`, paste the key, then `npm run dev:worker`. Plain
+   `vite dev` has no `/api/contact`.
 
-Validation runs on both sides: the client checks before submit, and the Function re-validates
+Validation runs on both sides: the client checks before submit, and the Worker re-validates
 (including length caps), honors a honeypot field, applies a best-effort per-IP rate limit
 (5 requests / 10 min, per isolate), and only then calls Web3Forms.
 
-The in-Function rate limit is friction, not a guarantee (isolate state is not shared across
+The in-Worker rate limit is friction, not a guarantee (isolate state is not shared across
 Cloudflare locations). For a hard limit, add a WAF rate-limiting rule on `/api/contact` in the
 Cloudflare dashboard, or wire in [Turnstile](https://developers.cloudflare.com/turnstile/) — if you
 do, extend `script-src` and `frame-src` in `public/_headers` with `https://challenges.cloudflare.com`.
@@ -132,18 +134,25 @@ values to retheme the whole site.
   the content explicitly says otherwise.
 - `/contact` — business enquiry form. Its `/api/contact` contract must remain unchanged.
 
-## Deployment (Cloudflare Pages)
+## Deployment (Cloudflare Workers)
 
-- Build command: `npm run build`
-- Build output directory: `dist`
-- Node version: 22 (set via `NODE_VERSION=22` environment variable)
+`wrangler.jsonc` describes the whole deployment: the Worker (`worker/index.ts`), the static
+assets directory (`dist`), asset routing (`/about` → `about.html`, `404.html` with a real 404
+status), and the custom domains `kodek.hr` / `www.kodek.hr` (the Worker 301s `www.` to the
+apex). `dist/_headers` applies the CSP and cache headers.
+
+- Manual: `npm run deploy` (builds, then `wrangler deploy`; needs `npx wrangler login` once).
+- Workers Builds (Git): build command `npm run build`, deploy command `npx wrangler deploy`,
+  Node 22. CI also runs `wrangler deploy --dry-run` to validate the config without deploying.
+- Secret: `WEB3FORMS_ACCESS_KEY` (see Contact form).
 
 The build prerenders every route to static HTML (`index.html`, `about.html`, `projects.html`,
 `contact.html`) plus a real `404.html`, so direct navigation works without a SPA fallback and
 unknown URLs return an actual 404 status. The `sitemap.xml` is also generated at build time by
 `scripts/prerender.mjs`. The app hydrates on load and continues as a SPA.
 
-Custom domain: point `kodek.hr` at the Pages project in the Cloudflare dashboard.
+Custom domains are declared in `wrangler.jsonc` and attached on deploy; the zone must already be
+on the same Cloudflare account.
 
 ## SEO & indexing
 

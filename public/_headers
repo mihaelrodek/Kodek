@@ -1,4 +1,4 @@
-# Cloudflare Pages headers.
+# Headers for Cloudflare Workers Static Assets (same format as Pages).
 # Security headers on every response; long-lived immutable cache for Vite's
 # content-hashed assets (filenames change on every build, so this is safe).
 #
@@ -34,8 +34,8 @@
 /icon-512.png
   Cache-Control: public, max-age=86400
 
-# HTML must revalidate so new deploys show up immediately (Pages does this by
-# default, but be explicit). Every route is now a flat prerendered file
+# HTML must revalidate so new deploys show up immediately (the asset server
+# does this by default, but be explicit). Every route is now a flat prerendered file
 # (index.html, about.html, ...) plus 404.html — there is no SPA shell.
 /index.html
   Cache-Control: public, max-age=0, must-revalidate

@@ -29,7 +29,7 @@ export default defineConfig({
     },
   ],
   webServer: {
-    // Serves dist/ with Cloudflare-Pages-like routing, building it if missing.
+    // Serves dist/ with Workers-Static-Assets-like routing, building it if missing.
     command: 'node tests/e2e/static-server.mjs',
     url: baseURL,
     reuseExistingServer: !process.env.CI,

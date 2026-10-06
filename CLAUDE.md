@@ -7,10 +7,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```bash
 npm run dev           # Vite dev server on http://localhost:5174 (strictPort — fails if taken)
 npm run build         # tsc -b + client build + SSR build + prerender → dist/
-npm run preview       # serve dist/ (static only, no Pages Function)
+npm run preview       # serve dist/ (static only, no /api)
+npm run dev:worker    # build + `wrangler dev`: the real Worker and asset routing on :8787
+npm run deploy        # build + `wrangler deploy` (needs `npx wrangler login` once)
 npm run lint          # eslint .
 npm run lint:fix
-npm run format        # prettier on src/, functions/, scripts/
+npm run format        # prettier on src/, worker/, scripts/, tests/
 npm run format:check
 ```
 
@@ -21,7 +23,7 @@ npm test              # Vitest, jsdom, tests/unit/
 npm run test:watch    # Vitest in watch mode
 npm run test:e2e      # Playwright chromium + iPhone 13 emulation; builds dist/ if missing
                       # and serves it via tests/e2e/static-server.mjs with
-                      # Cloudflare-Pages-like routing (vite preview's SPA fallback would
+                      # Workers-Static-Assets-like routing (vite preview's SPA fallback would
                       # mask the 404 page and cause a hydration mismatch)
 npm run typecheck     # tsc -b (now covers tests via tsconfig.test.json)
 ```
@@ -30,21 +32,21 @@ The e2e smoke test fails on any console message matching hydration signatures in
 minified React error #418/#421/#422/#423/#425, so hydration-unsafe changes are caught there.
 
 Type-checking is `tsc -b` over four project references: `tsconfig.app.json` (src/, excludes
-`entry-server.tsx`), `tsconfig.functions.json` (functions/, WebWorker lib), `tsconfig.node.json`
+`entry-server.tsx`), `tsconfig.worker.json` (worker/, `@cloudflare/workers-types`), `tsconfig.node.json`
 (vite.config.ts), and `tsconfig.test.json` (tests/).
 
-To exercise the contact-form Pages Function locally (plain `vite dev` does not serve `/functions`,
-so `/api/contact` 404s there):
+To exercise `/api/contact` locally (plain `vite dev` has no Worker, so it 404s there):
 
 ```bash
-cp .env.example .env.local   # set WEB3FORMS_ACCESS_KEY
-npm run build && npx wrangler pages dev dist
+cp .dev.vars.example .dev.vars   # set WEB3FORMS_ACCESS_KEY
+npm run dev:worker               # wrangler dev reads .dev.vars
 ```
 
 ## Architecture
 
 React 19 + TypeScript + Vite 8 + Tailwind v4 + React Router v7 + Framer Motion. Deployed to
-Cloudflare Pages (build output `dist`, Node 22). `@/` aliases `src/`.
+Cloudflare Workers: `wrangler.jsonc` serves `dist/` as static assets and runs `worker/index.ts`
+first on every request (Node 22). `@/` aliases `src/`.
 
 ### Build-time prerender + hydration (the non-obvious part)
 
@@ -111,16 +113,22 @@ resolve with `localized(lang, en, hr)` falling back to English. Project category
 translations (`t.projects.categories`) must stay in sync with `ProjectCategory` in
 `src/data/projects.ts`. Storage key `portfolio-lang`; only explicit toggle clicks persist.
 
-### Contact form / Pages Function
+### Worker / contact form
 
-`functions/api/contact.ts` is the only server code. It holds `WEB3FORMS_ACCESS_KEY` (no `VITE_`
-prefix — never expose it client-side), re-validates input with length caps, honors a honeypot
-field, applies a best-effort per-isolate rate limit, then forwards to Web3Forms. The client posts
-to `/api/contact`.
+`worker/index.ts` is the Worker entry: 301 `www.kodek.hr` → `kodek.hr`, `POST /api/contact` →
+`worker/contact.ts`, everything else → `env.ASSETS.fetch(request)`. Asset behaviour lives in
+`wrangler.jsonc`: `html_handling: auto-trailing-slash` (so `/about` serves `about.html`),
+`not_found_handling: 404-page` (real 404 status from `404.html`), `run_worker_first: true`, and
+the custom-domain routes. Adding a route to the site needs no Worker change.
+
+`worker/contact.ts` holds `WEB3FORMS_ACCESS_KEY` (a Worker secret, no `VITE_` prefix — never
+expose it client-side), re-validates input with length caps, honors a honeypot field, applies a
+best-effort per-isolate rate limit, then forwards to Web3Forms. Unit tests:
+`tests/unit/contact-function.test.ts` and `tests/unit/worker.test.ts`.
 
 ### Security headers / CSP
 
-`public/_headers` sets CSP with `script-src 'self' __CSP_SCRIPT_HASHES__` (filled at build).
+`public/_headers` (honoured by Workers Static Assets) sets CSP with `script-src 'self' __CSP_SCRIPT_HASHES__` (filled at build).
 Adding any third-party script or iframe (e.g. Turnstile) requires extending `script-src` /
 `frame-src` there. `connect-src 'self'` — external fetches from the browser are blocked.
 

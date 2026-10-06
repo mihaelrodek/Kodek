@@ -12,7 +12,7 @@ export default defineConfig({
     },
   },
   test: {
-    // jsdom by default; the Pages Function suite opts into node with a
+    // jsdom by default; the Worker suites opt into node with a
     // `@vitest-environment node` docblock.
     environment: 'jsdom',
     globals: false,
