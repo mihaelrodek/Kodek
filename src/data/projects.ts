@@ -23,6 +23,8 @@ export interface Project {
   sortYear?: number
   category: ProjectCategory
   tags: string[]
+  /** Optional Croatian tag labels, same order as `tags`; falls back to `tags`. */
+  tagsHr?: string[]
   links?: ProjectLink[]
   featured?: boolean
   gradient?: string
@@ -103,6 +105,7 @@ export const projects: Project[] = [
     sortYear: 2022,
     category: 'academic',
     tags: ['Android', 'Kotlin', 'Thesis'],
+    tagsHr: ['Android', 'Kotlin', 'Diplomski rad'],
     gradient: GRADIENTS.rose,
     links: [
       {
@@ -123,6 +126,7 @@ export const projects: Project[] = [
     sortYear: 2021,
     category: 'web',
     tags: ['Web', 'Group project', 'Software Engineering'],
+    tagsHr: ['Web', 'Grupni projekt', 'Programsko inženjerstvo'],
     gradient: GRADIENTS.emerald,
   },
   {
@@ -149,6 +153,7 @@ export const projects: Project[] = [
     sortYear: 2021,
     category: 'academic',
     tags: ["Bachelor's thesis", 'Interactive systems'],
+    tagsHr: ['Završni rad', 'Interaktivni sustavi'],
     gradient: GRADIENTS.sky,
     links: [
       {
@@ -168,6 +173,7 @@ export const projects: Project[] = [
       'Privatna platforma koju sam samostalno osmislio i izradio za organizaciju i praćenje turnira u beli. Omogućuje prijave parova, ždrijeb, unos rezultata i praćenje poretka, uz kalendar i kartu turnira.',
     category: 'personal',
     tags: ['Web', 'Bela', 'Tournaments'],
+    tagsHr: ['Web', 'Bela', 'Turniri'],
     logo: '/projects/bela-turniri.svg',
     links: [{ label: 'bela-turniri.com', href: 'https://bela-turniri.com', icon: 'external' }],
   },
@@ -180,6 +186,7 @@ export const projects: Project[] = [
       'Privatna web igra koju sam samostalno osmislio i izradio za igranje bele s prijateljima ili botovima izravno u pregledniku. Uključuje zapisnik za vođenje bodova i radi na mobitelu bez instalacije.',
     category: 'personal',
     tags: ['Web', 'Bela', 'Online game'],
+    tagsHr: ['Web', 'Bela', 'Online igra'],
     logo: '/projects/bela-games.svg',
     links: [{ label: 'bela.games', href: 'https://bela.games', icon: 'external' }],
   },
@@ -192,6 +199,7 @@ export const projects: Project[] = [
       'Privatna platforma koju sam samostalno osmislio i izradio za organizaciju i praćenje futsal turnira. Obuhvaća unos ekipa i igrača, ždrijeb i raspored utakmica te rezultate uživo, tablice i statistiku strijelaca.',
     category: 'personal',
     tags: ['Web', 'Futsal', 'Tournaments'],
+    tagsHr: ['Web', 'Futsal', 'Turniri'],
     logo: '/projects/futsal-turniri.svg',
     links: [{ label: 'futsal-turniri.com', href: 'https://futsal-turniri.com', icon: 'external' }],
   },

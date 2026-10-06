@@ -89,10 +89,15 @@
   body {
     @apply bg-background text-foreground min-h-svh antialiased;
     font-family: var(--font-sans);
+    /* Site-wide dot grid on the same 30px pitch as the hero's DotField canvas,
+       which replaces it inside the hero (the hero paints an opaque background). */
+    background-image: radial-gradient(circle, rgb(32 30 29 / 0.13) 1px, transparent 1.5px);
+    background-size: 30px 30px;
   }
 
   .dark body {
     @apply bg-zinc-950 text-zinc-300;
+    background-image: radial-gradient(circle, rgb(255 255 255 / 0.1) 1px, transparent 1.5px);
   }
 
   h1,

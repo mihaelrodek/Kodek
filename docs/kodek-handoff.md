@@ -9,7 +9,7 @@ nothing was committed, pushed, or deployed.
   founder teaser, keyboard-accessible FAQ, and final inquiry CTA.
 - `/about`: the former personal hero, complete timeline, biography, CV, and skills.
 - `/projects`: Work / Radovi, preserving filters, sorting, URL state, and project history.
-- `/contact`: business inquiry copy using `mihael.rodek1@gmail.com`. The contact API contract
+- `/contact`: business inquiry copy using `info@kodek.hr`. The contact API contract
   and `functions/api/contact.ts` behavior were not changed by this task.
 - Kodek wordmark, geometric K artwork, mobile Sheet navigation, legal business footer,
   English/Croatian copy, light/dark themes, self-hosted Geist, and reduced-motion behavior.

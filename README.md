@@ -6,7 +6,7 @@ background live on `/about` and `/projects`. The site uses React 19 + TypeScript
 CSS v4, and Framer Motion, and deploys to Cloudflare Pages.
 
 Business details: Kodek, vl. Mihael Rodek · Kamenica 35 K, 42250 Kamenica, Croatia · OIB
-58118867613 · [mihael.rodek1@gmail.com](mailto:mihael.rodek1@gmail.com)
+58118867613 · [info@kodek.hr](mailto:info@kodek.hr)
 
 ## Stack
 
@@ -76,7 +76,7 @@ The `/contact` page posts to a **Cloudflare Pages Function** (`functions/api/con
 holds the [Web3Forms](https://web3forms.com) access key server-side and forwards an enquiry to
 the business email. The key never ships in the client bundle. To wire it up:
 
-1. Go to https://web3forms.com, enter `mihael.rodek1@gmail.com`, confirm via the email Web3Forms
+1. Go to https://web3forms.com, enter `info@kodek.hr`, confirm via the email Web3Forms
    sends, and copy the access key.
 2. In production: add `WEB3FORMS_ACCESS_KEY` (no `VITE_` prefix) to the Cloudflare Pages project
    environment variables (Settings → Environment variables, mark it encrypted), then redeploy.

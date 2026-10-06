@@ -124,7 +124,8 @@ export default function ProjectsPage() {
           p.title.toLowerCase().includes(q) ||
           p.description.toLowerCase().includes(q) ||
           p.descriptionHr?.toLowerCase().includes(q) ||
-          p.tags.some((tag) => tag.toLowerCase().includes(q))
+          p.tags.some((tag) => tag.toLowerCase().includes(q)) ||
+          p.tagsHr?.some((tag) => tag.toLowerCase().includes(q))
         )
       })
       .sort((a, b) => {

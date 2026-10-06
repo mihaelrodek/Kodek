@@ -80,7 +80,7 @@ const en = {
     workEyebrow: '03 / Selected work',
     workTitle: 'A look under the hood.',
     workIntro:
-      'Selected open-source, learning, and university projects by Mihael Rodek, created before Kodek.',
+      'Live platforms and open source by Mihael Rodek, designed and built independently before Kodek.',
     allWork: 'View all work',
     projectCta: 'Explore project',
     stackEyebrow: 'Good foundations, thoughtfully chosen.',
@@ -177,11 +177,39 @@ const en = {
   },
   about: {
     eyebrow: 'About me',
+    role: 'univ. mag. ing. comp. · Founder of Kodek',
+    intro:
+      'Software developer from Kamenica, Croatia, with an MSc in Computer Engineering from FER. Since 2021 I have been building banking and public-sector systems at True North; Kodek is where that experience goes to work for small businesses and individuals.',
     body: 'I’m Mihael Rodek, a full-stack software engineer and the founder of Kodek. I hold an MSc in Computer Engineering from FER and build reliable products across web, backend, and mobile systems, with experience in banking and public-sector projects.',
-    downloadCv: 'Download CV (PDF)',
+    downloadCv: 'CV (PDF)',
+    photoAlt: 'Mihael Rodek, founder of Kodek',
     timelineTitle: 'My path so far',
+    experienceEyebrow: 'Experience',
+    experienceIntro:
+      'Work done as a full-stack developer at True North, before and alongside Kodek. Listed as professional background, not as Kodek projects.',
+    educationEyebrow: 'Education',
+    thesisLabel: 'Master’s thesis',
     skillsTitle: 'Skills',
     skillsIntro: 'Technologies I use to take products from a clear idea to dependable software.',
+    principlesEyebrow: 'How I work',
+    principlesTitle: 'Direct, considered, there after launch.',
+    principles: [
+      {
+        title: 'Direct communication',
+        body: 'You talk to the person writing the code. No intermediaries, nothing lost in translation.',
+      },
+      {
+        title: 'Considered technical choices',
+        body: 'Proven tools that fit the project, not the trend. Something you can still maintain in two years.',
+      },
+      {
+        title: 'Attention beyond launch',
+        body: 'Going live is not the end. Maintenance, fixes, and new features are agreed as your needs grow.',
+      },
+    ],
+    ctaTitle: 'Have a project in mind?',
+    ctaBody: 'Describe what you need and I will reply with practical next steps.',
+    ctaButton: 'Request a quote',
   },
   projects: {
     eyebrow: 'Work',
@@ -320,7 +348,7 @@ const hr: Translations = {
     workEyebrow: '03 / Odabrani radovi',
     workTitle: 'Pogled iza koda.',
     workIntro:
-      'Odabrani open source, edukacijski i fakultetski projekti Mihaela Rodeka, nastali prije Kodeka.',
+      'Platforme u produkciji i open source Mihaela Rodeka, samostalno osmišljeni i izrađeni prije Kodeka.',
     allWork: 'Svi radovi',
     projectCta: 'Pogledajte projekt',
     stackEyebrow: 'Dobri temelji, promišljen odabir.',
@@ -415,11 +443,39 @@ const hr: Translations = {
   },
   about: {
     eyebrow: 'O meni',
+    role: 'univ. mag. ing. comp. · osnivač Kodeka',
+    intro:
+      'Softverski inženjer iz Kamenice, magistar računarstva s FER-a. Od 2021. razvijam bankarske i javne sustave u True Northu; Kodek je mjesto gdje to iskustvo radi za male tvrtke i pojedince.',
     body: 'Ja sam Mihael Rodek, full-stack softverski inženjer i osnivač Kodeka. Magistrirao sam računarstvo na FER-u te razvijam pouzdana web, backend i mobilna rješenja, uz iskustvo na projektima u bankarskom i javnom sektoru.',
-    downloadCv: 'Preuzmi životopis (PDF)',
+    downloadCv: 'Životopis (PDF)',
+    photoAlt: 'Mihael Rodek, osnivač Kodeka',
     timelineTitle: 'Moj dosadašnji put',
+    experienceEyebrow: 'Iskustvo',
+    experienceIntro:
+      'Rad kao full-stack developer u True Northu, prije i uz Kodek. Navedeno kao profesionalna pozadina, ne kao Kodekovi projekti.',
+    educationEyebrow: 'Obrazovanje',
+    thesisLabel: 'Diplomski rad',
     skillsTitle: 'Vještine',
     skillsIntro: 'Tehnologije kojima jasnu ideju pretvaram u pouzdan softverski proizvod.',
+    principlesEyebrow: 'Kako radim',
+    principlesTitle: 'Izravno, promišljeno, prisutno i nakon objave.',
+    principles: [
+      {
+        title: 'Izravna komunikacija',
+        body: 'Razgovarate s osobom koja piše kod. Bez posrednika, bez prepričavanja.',
+      },
+      {
+        title: 'Promišljene tehničke odluke',
+        body: 'Provjereni alati koji odgovaraju projektu, ne trendu. Rješenje koje se može održavati i za dvije godine.',
+      },
+      {
+        title: 'Briga i nakon objave',
+        body: 'Objava nije kraj. Održavanje, popravke i nove funkcionalnosti dogovaramo prema vašim potrebama.',
+      },
+    ],
+    ctaTitle: 'Imate projekt na umu?',
+    ctaBody: 'Opišite što trebate i odgovorit ću s konkretnim sljedećim koracima.',
+    ctaButton: 'Zatraži ponudu',
   },
   projects: {
     eyebrow: 'Radovi',

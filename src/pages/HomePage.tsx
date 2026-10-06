@@ -28,12 +28,13 @@ import { localized } from '@/i18n/translations'
 import { projects } from '@/data/projects'
 import { skillGroups } from '@/data/skills'
 
-// Two existing featured projects plus a representative web project. Their history
-// is disclosed in the section intro; these are not presented as Kodek commissions.
-const selectedProjects = [
-  ...projects.filter((project) => project.featured),
-  ...projects.filter((project) => !project.featured && project.category === 'web'),
-].slice(0, 3)
+// Live, independently built platforms first, then the open-source plugin: the
+// strongest proof of shipped work. Their history is disclosed in the section
+// intro; these are not presented as Kodek commissions.
+const SELECTED_IDS = ['bela-turniri', 'futsal-turniri', 'helm-file-utils']
+const selectedProjects = SELECTED_IDS.flatMap((id) =>
+  projects.filter((project) => project.id === id),
+)
 const serviceIcons = [Braces, Globe2, UserRound, Wrench]
 const stack = skillGroups.flatMap((group) => group.skills)
 const stackRows = [
@@ -73,7 +74,7 @@ export default function HomePage() {
   return (
     <>
       <section
-        className="relative isolate overflow-hidden border-b border-zinc-200/80 dark:border-zinc-800/80"
+        className="bg-background relative isolate overflow-hidden border-b border-zinc-200/80 dark:border-zinc-800/80 dark:bg-zinc-950"
         aria-labelledby="hero-heading"
       >
         <DotField />
@@ -266,7 +267,9 @@ export default function HomePage() {
                     <p className="mt-3 font-mono text-[10px] tracking-widest text-zinc-500 uppercase dark:text-zinc-400">
                       {t.projects.categories[project.category]} ·{' '}
                       {project.year && `${project.year} · `}
-                      {project.tags.slice(0, 3).join(' / ')}
+                      {(lang === 'hr' ? (project.tagsHr ?? project.tags) : project.tags)
+                        .slice(0, 3)
+                        .join(' / ')}
                     </p>
                   </div>
                   <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">

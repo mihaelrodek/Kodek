@@ -6,7 +6,7 @@ export const business = {
   address: 'Kamenica 35 K, 42250 Kamenica, Croatia',
   addressHr: 'Kamenica 35 K, 42250 Kamenica, Hrvatska',
   oib: '58118867613',
-  email: 'mihael.rodek1@gmail.com',
+  email: 'info@kodek.hr',
   website: 'https://kodek.hr',
   copyrightYear: 2026,
   social: {

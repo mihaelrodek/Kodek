@@ -83,14 +83,19 @@ test.describe('Kodek landing page', () => {
   })
 })
 
-test.describe('About me and mobile navigation', () => {
-  test('About me retains the former personal hero and timeline', async ({ page }) => {
+test.describe('Founder page and mobile navigation', () => {
+  test('founder page shows the profile, experience, and skills', async ({ page }) => {
     await page.goto('/about')
     await settle(page)
 
-    await expect(page.getByRole('heading', { level: 1 })).toContainText(/my path so far/i)
-    await expect(page.locator('section[aria-label*="timeline" i]')).toHaveCount(1)
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mihael Rodek')
+    // The personal life timeline is kept in the codebase but not routed.
+    await expect(page.locator('section[aria-label*="timeline" i]')).toHaveCount(0)
+    await expect(page.getByRole('heading', { name: 'True North' })).toBeVisible()
     await expect(page.getByRole('heading', { name: /skills/i })).toBeVisible()
+    await expect(
+      page.getByRole('link', { name: 'Request a quote', exact: true }).last(),
+    ).toHaveAttribute('href', '/contact')
   })
 
   test('mobile menu supports focus, closing, and route navigation', async ({ page, isMobile }) => {
@@ -114,7 +119,7 @@ test.describe('About me and mobile navigation', () => {
     await openMenu.click()
     await page.getByRole('link', { name: 'About me', exact: true }).last().click()
     await expect(page).toHaveURL(/\/about$/)
-    await expect(page.getByRole('heading', { level: 1 })).toContainText(/my path so far/i)
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mihael Rodek')
   })
 
   test('landing page has no horizontal overflow on a phone viewport', async ({

@@ -138,10 +138,14 @@ element. `<MotionConfig reducedMotion="user">` wraps the app in both `src/main.t
 
 ### Kodek routes and business content
 
-`/` is the Kodek business landing page; `/about` is Mihael Rodek's founder profile; `/projects`
+`/` is the Kodek business landing page; `/about` is Mihael Rodek's founder profile (`AboutPage.tsx`,
+content from `src/data/founder.ts`, which reads `timeline.ts`); `/projects`
 is selected work; and `/contact` is the business enquiry form. Existing project records predate
 Kodek unless their content explicitly establishes otherwise. Do not turn prior work into a client
 claim, testimonial, or business metric.
+
+`src/pages/AboutTimelinePage.tsx` is the former personal life timeline. It is deliberately not
+routed; keep it compiling but do not link to it publicly.
 
 `index.html` contains a `ProfessionalService` JSON-LD entity for Kodek and a separate, linked
 `Person` entity for founder Mihael Rodek. Preserve their stable IDs and the founder's `/about`

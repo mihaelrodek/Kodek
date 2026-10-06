@@ -118,18 +118,16 @@ test('stored Croatian and dark-mode preferences hydrate cleanly on every route',
 test.describe('mobile', () => {
   test.skip(({ isMobile }) => !isMobile, 'mobile-viewport project only')
 
-  test('About me renders the former timeline on a phone viewport', async ({ page }) => {
+  test('founder page renders on a phone viewport', async ({ page }) => {
     const messages = watchConsole(page)
 
     await page.goto('/about')
     await settle(page)
 
-    // Both timeline variants label their <section> with t.timeline.ariaLabel.
-    const timeline = page.locator('section[aria-label*="timeline" i]')
-    await expect(timeline).toHaveCount(1)
-    await expect(timeline).toBeAttached()
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mihael Rodek')
+    await expect(page.getByRole('heading', { name: 'True North' })).toBeVisible()
 
-    expect(hydrationProblems(messages), 'hydration problems on mobile About me').toEqual([])
+    expect(hydrationProblems(messages), 'hydration problems on mobile founder page').toEqual([])
   })
 })
 

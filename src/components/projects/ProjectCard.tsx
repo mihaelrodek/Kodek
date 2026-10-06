@@ -99,7 +99,7 @@ export default function ProjectCard({ project, large }: ProjectCardProps) {
                     /
                   </span>
                 )}
-                {tag}
+                {lang === 'hr' ? (project.tagsHr?.[index] ?? tag) : tag}
               </li>
             ))}
           </ul>
