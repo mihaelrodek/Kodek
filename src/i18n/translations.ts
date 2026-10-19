@@ -69,20 +69,20 @@ const en = {
       "Simple: you know your business, I know how to build for the web. Here's how we get from an idea to a finished site.",
     process: [
       {
-        title: 'We have a chat.',
-        body: "You tell me what you do and what you need. Together we agree on what's included, how long it takes and what it costs.",
+        title: 'Initial call and consultation',
+        body: 'I get to know your business and what you need, then suggest the right solution. We agree on scope, timeline and price before any work starts.',
       },
       {
-        title: 'I show you a draft.',
-        body: 'You see how the site will look before I write any code. We tweak it until it feels right.',
+        title: 'Design proposal',
+        body: 'Before development you get a proposal of how the site will look. We refine it until you are happy with it.',
       },
       {
-        title: 'I build and test it.',
-        body: 'I build the site and keep you posted on progress. I check that everything works on phones and computers.',
+        title: 'Build and testing',
+        body: 'I keep you updated as the work progresses and make sure everything works on phones and computers.',
       },
       {
-        title: 'We launch, and I stick around.',
-        body: 'The site goes live and you get all the access. Need a change or a new feature later? Just get in touch.',
+        title: 'Launch and support',
+        body: 'The site goes live and you receive all access details. I remain available for changes and upgrades.',
       },
     ],
     workEyebrow: 'Selected work',
@@ -94,7 +94,7 @@ const en = {
     founderEyebrow: 'About me',
     founderTitle: 'You work directly with me.',
     founderBody:
-      "I'm Mihael Rodek, a software developer from Kamenica, Croatia. I hold a master's in computer engineering from FER in Zagreb and have worked as a full stack developer since 2021, on backend systems, web apps and mobile apps. Through Kodek I build websites and applications for small businesses, trades and individuals. You talk to me from the first idea to launch and after it, with no middlemen.",
+      "I'm Mihael Rodek. I hold a master's in computer engineering from FER in Zagreb and have worked as a full stack developer since 2021, on backend systems, web apps and mobile apps. Through Kodek I build websites and applications for small businesses, trades and individuals. You talk to me from the first idea to launch and after it, with no middlemen.",
     founderCta: 'See more',
     faqEyebrow: 'FAQ',
     faqTitle: 'Before we begin.',
@@ -179,7 +179,7 @@ const en = {
     eyebrow: 'About me',
     role: 'univ. mag. ing. comp. · Founder of Kodek',
     intro:
-      'Software developer from Kamenica, Croatia, with an MSc in Computer Engineering from FER. Since 2021 I have been building banking and public-sector systems at True North; Kodek is where that experience goes to work for small businesses and individuals.',
+      'Software developer with an MSc in Computer Engineering from FER. Since 2021 I have been building banking and public-sector systems at True North; Kodek is where that experience goes to work for small businesses and individuals.',
     body: 'I’m Mihael Rodek, a full-stack software engineer and the founder of Kodek. I hold an MSc in Computer Engineering from FER and build reliable products across web, backend, and mobile systems, with experience in banking and public-sector projects.',
     downloadCv: 'CV (PDF)',
     photoAlt: 'Mihael Rodek, founder of Kodek',
@@ -318,20 +318,20 @@ const hr: Translations = {
       'Jednostavno. Vi znate svoj posao, ja znam izradu. Ovako dolazimo od ideje do gotove stranice.',
     process: [
       {
-        title: 'Popričamo.',
-        body: 'Ispričate mi čime se bavite i što vam treba. Zajedno dogovorimo što ulazi u projekt, koliko traje i koliko košta.',
+        title: 'Inicijalni razgovor i savjetovanje',
+        body: 'Upoznam vaše poslovanje i potrebe te predložim odgovarajuće rješenje. Prije početka rada dogovorimo opseg, rok i cijenu.',
       },
       {
-        title: 'Pokažem vam prijedlog.',
-        body: 'Vidite kako će stranica izgledati prije nego što napišem ijednu liniju koda. Mijenjamo dok vam ne sjedne.',
+        title: 'Prijedlog dizajna',
+        body: 'Prije izrade dobivate prijedlog izgleda stranice. Prilagođavamo ga dok ne budete zadovoljni.',
       },
       {
-        title: 'Izradim i testiram.',
-        body: 'Gradim stranicu i redovito vam javljam što je novo. Provjerim da sve radi i na mobitelu i na računalu.',
+        title: 'Izrada i testiranje',
+        body: 'Redovito vas obavještavam o napretku i provjeravam da sve radi na mobitelu i računalu.',
       },
       {
-        title: 'Objavimo, a ja ostajem tu.',
-        body: 'Stranica ide uživo i dobivate sve pristupe. Trebate li kasnije izmjenu ili nadogradnju, samo se javite.',
+        title: 'Objava i podrška',
+        body: 'Stranica ide uživo, a vi dobivate sve pristupe. Za izmjene i nadogradnje ostajem na raspolaganju.',
       },
     ],
     workEyebrow: 'Odabrani radovi',
@@ -344,7 +344,7 @@ const hr: Translations = {
     founderEyebrow: 'O meni',
     founderTitle: 'Radite izravno sa mnom.',
     founderBody:
-      'Ja sam Mihael Rodek, programer iz Kamenice. Diplomirao sam računarstvo na FER-u, a od 2021. radim kao full stack developer na backend sustavima, web i mobilnim aplikacijama. Kroz Kodek izrađujem web stranice i aplikacije za obrte, male tvrtke i pojedince. Od prve ideje do objave, i nakon nje, razgovarate izravno sa mnom, bez posrednika.',
+      'Ja sam Mihael Rodek. Diplomirao sam računarstvo na FER-u, a od 2021. radim kao full stack developer na backend sustavima, web i mobilnim aplikacijama. Kroz Kodek izrađujem web stranice i aplikacije za obrte, male tvrtke i pojedince. Od prve ideje do objave, i nakon nje, razgovarate izravno sa mnom, bez posrednika.',
     founderCta: 'Vidi više',
     faqEyebrow: 'Česta pitanja',
     faqTitle: 'Prije nego krenemo.',
@@ -427,7 +427,7 @@ const hr: Translations = {
     eyebrow: 'O meni',
     role: 'univ. mag. ing. comp. · osnivač Kodeka',
     intro:
-      'Softverski inženjer iz Kamenice, magistar računarstva s FER-a. Od 2021. razvijam bankarske i javne sustave u True Northu; Kodek je mjesto gdje to iskustvo radi za male tvrtke i pojedince.',
+      'Softverski inženjer, magistar računarstva s FER-a. Od 2021. razvijam bankarske i javne sustave u True Northu; Kodek je mjesto gdje to iskustvo radi za male tvrtke i pojedince.',
     body: 'Ja sam Mihael Rodek, full-stack softverski inženjer i osnivač Kodeka. Magistrirao sam računarstvo na FER-u te razvijam pouzdana web, backend i mobilna rješenja, uz iskustvo na projektima u bankarskom i javnom sektoru.',
     downloadCv: 'Životopis (PDF)',
     photoAlt: 'Mihael Rodek, osnivač Kodeka',

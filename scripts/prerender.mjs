@@ -43,7 +43,7 @@ const PAGES = [
       file: 'o-meni.html',
       title: 'O meni: Mihael Rodek, programer i osnivač | Kodek',
       description:
-        'Mihael Rodek, programer iz Kamenice kraj Lepoglave i osnivač Kodeka. Izrađuje web stranice i web aplikacije po mjeri, a s njim surađujete izravno.',
+        'Mihael Rodek, programer i osnivač Kodeka, magistar računarstva s FER-a. Izrađuje web stranice i web aplikacije po mjeri, a s njim surađujete izravno.',
     },
     en: {
       path: '/en/about',
@@ -51,7 +51,7 @@ const PAGES = [
       file: 'en/about.html',
       title: 'About Mihael Rodek, developer and founder | Kodek',
       description:
-        'Mihael Rodek is a software developer from Kamenica near Lepoglava, Croatia, and the founder of Kodek. He builds custom websites and web apps, end to end.',
+        'Mihael Rodek is a software developer and the founder of Kodek, with an MSc in computer engineering from FER. He builds custom websites and web apps, end to end.',
     },
   },
   {
