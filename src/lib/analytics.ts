@@ -41,7 +41,11 @@ export function storeConsent(value: Consent) {
 
 let loaded = false
 
-/** Injects gtag.js once. Page views are sent manually by `trackPageview`. */
+/**
+ * Injects gtag.js once. The initial page view is sent by `config`; later SPA
+ * navigations are picked up by GA's Enhanced measurement (browser history
+ * events), so no manual page_view is sent (that would double-count).
+ */
 export function loadAnalytics() {
   if (!GA_ID || loaded) return
   loaded = true
@@ -52,24 +56,11 @@ export function loadAnalytics() {
     window.dataLayer!.push(arguments)
   }
   window.gtag('js', new Date())
-  window.gtag('config', GA_ID, { send_page_view: false })
+  window.gtag('config', GA_ID)
   const script = document.createElement('script')
   script.async = true
   script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(GA_ID)}`
   document.head.appendChild(script)
-}
-
-export function isAnalyticsLoaded() {
-  return loaded
-}
-
-export function trackPageview(path: string) {
-  if (!loaded || !window.gtag) return
-  window.gtag('event', 'page_view', {
-    page_path: path,
-    page_location: window.location.href,
-    page_title: document.title,
-  })
 }
 
 /**

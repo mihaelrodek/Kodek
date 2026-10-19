@@ -151,7 +151,7 @@ Google Analytics 4 loads only after the visitor accepts the consent banner (`src
 `src/lib/analytics.ts`). The Measurement ID comes from `VITE_GA_MEASUREMENT_ID` in `.env.production`
 (public ID, committed); without it no script loads and no banner renders. Consent is stored in
 localStorage `kodek-analytics-consent` and read only after mount (hydration-safe); the footer
-"Postavke kolačića" button reopens the banner. Page views are sent manually on route change. CSP in
+"Postavke kolačića" button reopens the banner. Page views: the initial one comes from gtag `config`; SPA navigations rely on GA4 Enhanced measurement (browser history events) — do not add manual page_view calls (double counting). CSP in
 `public/_headers` allows `www.googletagmanager.com` (script) and the Google Analytics collect hosts
 (connect/img). Playwright pre-answers consent via `storageState` in `playwright.config.ts`.
 

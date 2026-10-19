@@ -1,52 +1,38 @@
 import { useEffect, useState } from 'react'
-import { useLocation } from 'react-router-dom'
 import {
   CONSENT_OPEN_EVENT,
   GA_ID,
-  isAnalyticsLoaded,
   loadAnalytics,
   readConsent,
   revokeAnalytics,
   storeConsent,
-  trackPageview,
   type Consent,
 } from '../lib/analytics'
 import { useTranslation } from '../hooks/useTranslation'
 
 /**
- * Consent banner + page-view tracking. Renders nothing on the server and on
+ * Consent banner. Page views are tracked by gtag itself once loaded. Renders nothing on the server and on
  * the first client render; everything happens after mount.
  */
 export default function Analytics() {
   const { t } = useTranslation()
-  const location = useLocation()
   const [open, setOpen] = useState(false)
-  const [consent, setConsent] = useState<Consent | null>(null)
 
   useEffect(() => {
     if (!GA_ID) return
     const stored = readConsent()
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setConsent(stored)
     if (stored === 'granted') loadAnalytics()
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     else if (stored === null) setOpen(true)
     const reopen = () => setOpen(true)
     window.addEventListener(CONSENT_OPEN_EVENT, reopen)
     return () => window.removeEventListener(CONSENT_OPEN_EVENT, reopen)
   }, [])
 
-  // One page_view per route change (the SPA never reloads the document).
-  useEffect(() => {
-    if (consent === 'granted' && isAnalyticsLoaded()) {
-      trackPageview(location.pathname + location.search)
-    }
-  }, [consent, location.pathname, location.search])
-
   if (!GA_ID || !open) return null
 
   const choose = (value: Consent) => {
     storeConsent(value)
-    setConsent(value)
     setOpen(false)
     if (value === 'granted') loadAnalytics()
     else revokeAnalytics()
