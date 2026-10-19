@@ -65,24 +65,23 @@ const en = {
     serviceCta: 'Tell me what you need',
     processEyebrow: 'How it works',
     processTitle: "How we'll work together",
-    processIntro:
-      "Simple: you know your business, I know how to build for the web. Here's how we get from an idea to a finished site.",
+    processIntro: 'A clear path from idea to finished site, in four steps.',
     process: [
       {
-        title: 'Initial call and consultation',
-        body: 'I get to know your business and what you need, then suggest the right solution. We agree on scope, timeline and price before any work starts.',
+        title: 'Initial call',
+        body: 'Getting to know your business and needs, and suggesting the right solution. Scope, timeline and price are agreed before work starts.',
       },
       {
         title: 'Design proposal',
-        body: 'Before development you get a proposal of how the site will look. We refine it until you are happy with it.',
+        body: 'Before development you receive a proposal of how the site will look, refined until you are happy with it.',
       },
       {
         title: 'Build and testing',
-        body: 'I keep you updated as the work progresses and make sure everything works on phones and computers.',
+        body: 'Regular progress updates and testing on phones and computers throughout development.',
       },
       {
         title: 'Launch and support',
-        body: 'The site goes live and you receive all access details. I remain available for changes and upgrades.',
+        body: 'The site goes live and you receive all access details. Changes and upgrades remain available after launch.',
       },
     ],
     workEyebrow: 'Selected work',
@@ -314,24 +313,23 @@ const hr: Translations = {
     serviceCta: 'Recite mi što vam treba',
     processEyebrow: 'Način rada',
     processTitle: 'Kako izgleda suradnja?',
-    processIntro:
-      'Jednostavno. Vi znate svoj posao, ja znam izradu. Ovako dolazimo od ideje do gotove stranice.',
+    processIntro: 'Jasan put od ideje do gotove stranice, u četiri koraka.',
     process: [
       {
-        title: 'Inicijalni razgovor i savjetovanje',
-        body: 'Upoznam vaše poslovanje i potrebe te predložim odgovarajuće rješenje. Prije početka rada dogovorimo opseg, rok i cijenu.',
+        title: 'Inicijalni razgovor',
+        body: 'Upoznavanje vašeg poslovanja i potreba te prijedlog odgovarajućeg rješenja. Opseg, rok i cijena dogovaraju se prije početka rada.',
       },
       {
         title: 'Prijedlog dizajna',
-        body: 'Prije izrade dobivate prijedlog izgleda stranice. Prilagođavamo ga dok ne budete zadovoljni.',
+        body: 'Prije izrade dobivate prijedlog izgleda stranice, koji se prilagođava dok ne budete zadovoljni.',
       },
       {
         title: 'Izrada i testiranje',
-        body: 'Redovito vas obavještavam o napretku i provjeravam da sve radi na mobitelu i računalu.',
+        body: 'Redovite obavijesti o napretku te provjera rada na mobitelu i računalu tijekom cijele izrade.',
       },
       {
         title: 'Objava i podrška',
-        body: 'Stranica ide uživo, a vi dobivate sve pristupe. Za izmjene i nadogradnje ostajem na raspolaganju.',
+        body: 'Stranica ide uživo, a vi dobivate sve pristupe. Izmjene i nadogradnje moguće su i nakon objave.',
       },
     ],
     workEyebrow: 'Odabrani radovi',

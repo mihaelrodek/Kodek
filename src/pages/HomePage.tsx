@@ -226,14 +226,14 @@ export default function HomePage() {
         aria-labelledby="process-heading"
       >
         <div className="container-page">
-          <Reveal className="section-heading-row">
-            <div>
-              <Eyebrow>{copy.processEyebrow}</Eyebrow>
-              <h2 id="process-heading" className="section-title">
-                {copy.processTitle}
-              </h2>
-            </div>
-            <p className="section-description">{copy.processIntro}</p>
+          <Reveal>
+            <Eyebrow>{copy.processEyebrow}</Eyebrow>
+            <h2 id="process-heading" className="section-title">
+              {copy.processTitle}
+            </h2>
+            <p className="mt-4 max-w-xl text-sm leading-relaxed text-zinc-600 sm:text-base dark:text-zinc-400">
+              {copy.processIntro}
+            </p>
           </Reveal>
           <Reveal className="mt-12">
             <ol className="grid overflow-hidden rounded-3xl border border-zinc-200 bg-white sm:grid-cols-2 lg:grid-cols-4 dark:border-zinc-800 dark:bg-zinc-950/60">
@@ -257,7 +257,7 @@ export default function HomePage() {
                       transition={{ duration: 0.6, delay: 0.2 + index * 0.35, ease: 'easeOut' }}
                       className="bg-accent-600 dark:bg-accent-500 absolute inset-x-0 top-0 h-1 origin-left"
                     />
-                    <div className="flex items-start justify-between">
+                    <div className="flex items-center justify-between">
                       <span className="bg-accent-50 text-accent-700 dark:bg-accent-950/60 dark:text-accent-300 flex size-11 items-center justify-center rounded-xl">
                         <Icon className="size-5" />
                       </span>
@@ -268,7 +268,7 @@ export default function HomePage() {
                         {index + 1}
                       </span>
                     </div>
-                    <h3 className="mt-8 text-xl font-medium">{step.title}</h3>
+                    <h3 className="mt-7 text-xl leading-snug font-medium">{step.title}</h3>
                     <p className="mt-3 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
                       {step.body}
                     </p>
