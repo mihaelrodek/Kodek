@@ -157,6 +157,13 @@ const en = {
     short: { en: 'EN', hr: 'HR' } as Record<Lang, string>,
     switchTo: (l: string) => `Switch language to ${l}`,
   },
+  consent: {
+    title: 'Visit statistics',
+    body: 'With your permission this site uses Google Analytics cookies to count visits and see which pages are useful. The data is processed by Google. You can change your choice at any time in the footer.',
+    accept: 'Accept',
+    decline: 'Decline',
+    settings: 'Cookie settings',
+  },
   footer: {
     summary: 'Custom software, thoughtfully built in Croatia.',
     navigation: 'Navigation',
@@ -403,6 +410,13 @@ const hr: Translations = {
     label: 'Jezik',
     short: { en: 'EN', hr: 'HR' },
     switchTo: (l: string) => `Promijeni jezik u ${l}`,
+  },
+  consent: {
+    title: 'Statistika posjeta',
+    body: 'Uz vaše dopuštenje stranica koristi Google Analytics kolačiće za brojanje posjeta i pregled korisnih stranica. Podatke obrađuje Google. Izbor možete promijeniti bilo kada u podnožju stranice.',
+    accept: 'Prihvaćam',
+    decline: 'Odbijam',
+    settings: 'Postavke kolačića',
   },
   footer: {
     summary: 'Softver po mjeri, promišljeno izrađen u Hrvatskoj.',

@@ -14,6 +14,14 @@ export default defineConfig({
   outputDir: 'test-results',
   use: {
     baseURL,
+    // Pre-answer the analytics consent banner so it never overlays the UI under
+    // test (it only renders when VITE_GA_MEASUREMENT_ID is set at build time).
+    storageState: {
+      cookies: [],
+      origins: [
+        { origin: baseURL, localStorage: [{ name: 'kodek-analytics-consent', value: 'denied' }] },
+      ],
+    },
     trace: 'on-first-retry',
   },
   projects: [

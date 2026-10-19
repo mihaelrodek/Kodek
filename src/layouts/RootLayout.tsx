@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import ScrollToTop from '../components/ScrollToTop'
+import Analytics from '../components/Analytics'
 import { useTranslation } from '../hooks/useTranslation'
 
 export default function RootLayout() {
@@ -28,6 +29,7 @@ export default function RootLayout() {
         </Suspense>
       </main>
       <Footer />
+      <Analytics />
     </div>
   )
 }

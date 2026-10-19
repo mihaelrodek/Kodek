@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import Brand from './Brand'
 import { business } from '../data/business'
+import { CONSENT_OPEN_EVENT, GA_ID } from '../lib/analytics'
 import { localized } from '../i18n/translations'
 import { useTranslation } from '../hooks/useTranslation'
 
@@ -27,6 +28,15 @@ export default function Footer() {
           <p className="mt-4 text-xs text-zinc-500 dark:text-zinc-500">
             {t.footer.rights(business.copyrightYear)}
           </p>
+          {GA_ID && (
+            <button
+              type="button"
+              onClick={() => window.dispatchEvent(new Event(CONSENT_OPEN_EVENT))}
+              className="focus-ring mt-1 rounded text-xs text-zinc-500 underline-offset-4 hover:text-zinc-900 hover:underline dark:text-zinc-500 dark:hover:text-zinc-200"
+            >
+              {t.consent.settings}
+            </button>
+          )}
         </div>
 
         <div>

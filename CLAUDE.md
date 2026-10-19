@@ -145,6 +145,16 @@ domain. Unit tests:
 Adding any third-party script or iframe (e.g. Turnstile) requires extending `script-src` /
 `frame-src` there. `connect-src 'self' https://cloudflareinsights.com` — external fetches from the browser are blocked except the Cloudflare Web Analytics beacon (`script-src` allows `static.cloudflareinsights.com`).
 
+### Analytics
+
+Google Analytics 4 loads only after the visitor accepts the consent banner (`src/components/Analytics.tsx`,
+`src/lib/analytics.ts`). The Measurement ID comes from `VITE_GA_MEASUREMENT_ID` in `.env.production`
+(public ID, committed); without it no script loads and no banner renders. Consent is stored in
+localStorage `kodek-analytics-consent` and read only after mount (hydration-safe); the footer
+"Postavke kolačića" button reopens the banner. Page views are sent manually on route change. CSP in
+`public/_headers` allows `www.googletagmanager.com` (script) and the Google Analytics collect hosts
+(connect/img). Playwright pre-answers consent via `storageState` in `playwright.config.ts`.
+
 ### PWA manifest
 
 `public/manifest.webmanifest` declares the app for PWA installs. Icon PNGs (`icon-192.png`,
