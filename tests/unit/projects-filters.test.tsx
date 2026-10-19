@@ -7,12 +7,15 @@ import { MemoryRouter, StaticRouter, useLocation } from 'react-router-dom'
 import { LanguageProvider } from '@/contexts/LanguageContext'
 import { ThemeProvider } from '@/contexts/ThemeContext'
 import ProjectsPage from '@/pages/ProjectsPage'
-import { projects } from '@/data/projects'
+import { PROJECT_CATEGORY_ORDER, projects } from '@/data/projects'
 import { translations } from '@/i18n/translations'
 
 const t = translations.en.projects
 const TOTAL = projects.length
-const WEB_COUNT = projects.filter((p) => p.category === 'web').length
+const WEBSITE_COUNT = projects.filter((p) => p.category === 'website').length
+const GROUP_LABELS = PROJECT_CATEGORY_ORDER.filter((cat) =>
+  projects.some((p) => p.category === cat),
+).map((cat) => t.categories[cat])
 
 /**
  * Reports the router's current query string, normalised through
@@ -64,16 +67,21 @@ function currentSearch(): string {
   return screen.getByTestId('search').textContent ?? ''
 }
 
-/** Chip accessible names are `label` + the count, with no separator ("Web1"). */
+/** Chip accessible names are `label` + the count, with no separator ("Websites2"). */
 function chip(label: string): HTMLElement {
   return screen.getByRole('button', { name: new RegExp(`^${label}\\d+$`) })
 }
 
-/** The "Showing n of m" line is the cheapest read of how many cards are up. */
+/** Every project card is an `<article>`; count them in a markup snapshot or the live DOM. */
 function shownCount(html: string = document.body.innerHTML): number {
-  const match = /Showing (\d+) of (\d+)/.exec(html.replace(/<[^>]+>/g, ''))
-  if (!match) throw new Error('no "Showing n of m" line rendered')
-  return Number(match[1])
+  return html.match(/<article\b/g)?.length ?? 0
+}
+
+/** Category group headings (h2s carrying the group id), in document order. */
+function groupHeadings(html: string = document.body.innerHTML): string[] {
+  return [...html.matchAll(/<h2[^>]*id="projects-group-[^"]*"[^>]*>([^<]*)/g)].map((m) =>
+    m[1].trim(),
+  )
 }
 
 function pressedChipLabels(html: string): string[] {
@@ -85,7 +93,7 @@ describe('ProjectsPage URL state', () => {
     // Models scripts/prerender.mjs: whatever the visitor's URL says, the
     // static HTML is the default view.
     const html = renderToStaticMarkup(
-      <StaticRouter location="/projects?c=web&sort=alpha">
+      <StaticRouter location="/en/projects?c=website&sort=alpha">
         <Wrapper>
           <ProjectsPage />
         </Wrapper>
@@ -94,11 +102,12 @@ describe('ProjectsPage URL state', () => {
 
     expect(shownCount(html)).toBe(TOTAL)
     expect(pressedChipLabels(html)).toEqual([t.all])
+    expect(groupHeadings(html)).toEqual(GROUP_LABELS)
   })
 
-  it('first client render ignores ?c=web (hydration parity), then adopts it', async () => {
+  it('first client render ignores ?c=website (hydration parity), then adopts it', async () => {
     let firstCommit = ''
-    renderPage('/projects?c=web', (html) => {
+    renderPage('/en/projects?c=website', (html) => {
       firstCommit = html
     })
 
@@ -106,24 +115,52 @@ describe('ProjectsPage URL state', () => {
     // against the prerendered /projects HTML.
     expect(shownCount(firstCommit)).toBe(TOTAL)
     expect(pressedChipLabels(firstCommit)).toEqual([t.all])
+    expect(groupHeadings(firstCommit)).toEqual(GROUP_LABELS)
 
-    await waitFor(() => expect(chip(t.categories.web)).toHaveAttribute('aria-pressed', 'true'))
-    expect(shownCount()).toBe(WEB_COUNT)
+    await waitFor(() => expect(chip(t.categories.website)).toHaveAttribute('aria-pressed', 'true'))
+    await waitFor(() => expect(shownCount()).toBe(WEBSITE_COUNT))
     expect(chip(t.all)).toHaveAttribute('aria-pressed', 'false')
+    // A category filter flattens the grouped view.
+    expect(groupHeadings()).toEqual([])
     // A valid param is left alone.
-    expect(currentSearch()).toBe('c=web')
+    expect(currentSearch()).toBe('c=website')
+  })
+
+  it('default view groups projects under category headings in display order', () => {
+    renderPage('/en/projects')
+
+    expect(groupHeadings()).toEqual(GROUP_LABELS)
+    expect(GROUP_LABELS[0]).toBe(t.categories.website)
+    expect(screen.getAllByRole('heading', { level: 2 }).map((h) => h.id)).toEqual(
+      PROJECT_CATEGORY_ORDER.filter((cat) => projects.some((p) => p.category === cat)).map(
+        (cat) => `projects-group-${cat}`,
+      ),
+    )
+    expect(shownCount()).toBe(TOTAL)
+    // No "Clear filters" while nothing is filtered.
+    expect(screen.queryByRole('button', { name: t.clear })).toBeNull()
+  })
+
+  it('chips follow the category display order', () => {
+    renderPage('/en/projects')
+
+    const labels = screen
+      .getAllByRole('button', { pressed: false })
+      .map((b) => b.textContent?.replace(/\d+$/, ''))
+    expect(labels).toEqual(GROUP_LABELS)
   })
 
   it('clicking a category chip writes the category to the URL', async () => {
     const user = userEvent.setup()
-    renderPage('/projects')
+    renderPage('/en/projects')
 
     expect(currentSearch()).toBe('')
 
-    await user.click(chip(t.categories.mobile))
+    await user.click(chip(t.categories.app))
 
-    await waitFor(() => expect(currentSearch()).toBe('c=mobile'))
-    expect(chip(t.categories.mobile)).toHaveAttribute('aria-pressed', 'true')
+    await waitFor(() => expect(currentSearch()).toBe('c=app'))
+    expect(chip(t.categories.app)).toHaveAttribute('aria-pressed', 'true')
+    expect(groupHeadings()).toEqual([])
 
     // Back to "All" removes the param rather than writing `c=all`.
     await user.click(chip(t.all))
@@ -132,7 +169,7 @@ describe('ProjectsPage URL state', () => {
 
   it('typing mirrors the search into ?q and sorting into ?sort', async () => {
     const user = userEvent.setup()
-    renderPage('/projects')
+    renderPage('/en/projects')
 
     const search = screen.getByRole('searchbox', { name: t.searchAria })
     await user.type(search, 'helm')
@@ -147,7 +184,7 @@ describe('ProjectsPage URL state', () => {
   })
 
   it('falls back to the defaults for ?sort=bogus and scrubs it from the URL', async () => {
-    renderPage('/projects?sort=bogus&c=nope')
+    renderPage('/en/projects?sort=bogus&c=nope')
 
     const sort = screen.getByRole('combobox', { name: t.sortAria })
     expect(sort).toHaveValue('recent')
@@ -159,28 +196,29 @@ describe('ProjectsPage URL state', () => {
   })
 
   it('leaves params it does not own alone', async () => {
-    renderPage('/projects?utm_source=news&sort=bogus')
+    renderPage('/en/projects?utm_source=news&sort=bogus')
 
     await waitFor(() => expect(currentSearch()).toBe('utm_source=news'))
   })
 
   it('clear resets the filters and the URL', async () => {
     const user = userEvent.setup()
-    renderPage('/projects?c=web&q=dog')
+    renderPage('/en/projects?c=academic&q=dog')
 
-    await waitFor(() => expect(currentSearch()).toBe('c=web&q=dog'))
+    await waitFor(() => expect(currentSearch()).toBe('c=academic&q=dog'))
 
     await user.click(screen.getByRole('button', { name: t.clear }))
 
     await waitFor(() => expect(currentSearch()).toBe(''))
     expect(chip(t.all)).toHaveAttribute('aria-pressed', 'true')
     expect(screen.getByRole('searchbox', { name: t.searchAria })).toHaveValue('')
-    expect(shownCount()).toBe(TOTAL)
+    await waitFor(() => expect(shownCount()).toBe(TOTAL))
+    expect(groupHeadings()).toEqual(GROUP_LABELS)
   })
 
   it('the empty-state reset clears the URL too', async () => {
     const user = userEvent.setup()
-    renderPage('/projects?q=zzzznothing')
+    renderPage('/en/projects?q=zzzznothing')
 
     await waitFor(() => expect(shownCount()).toBe(0))
     const empty = screen.getByRole('heading', { name: t.empty.title }).parentElement
@@ -189,6 +227,35 @@ describe('ProjectsPage URL state', () => {
     await user.click(within(empty).getByRole('button', { name: t.empty.reset }))
 
     await waitFor(() => expect(currentSearch()).toBe(''))
-    expect(shownCount()).toBe(TOTAL)
+    await waitFor(() => expect(shownCount()).toBe(TOTAL))
+  })
+
+  it('grouped view uses bento spans that fill every lg row; the filtered view uses none', async () => {
+    const lgSpan = (article: Element) => {
+      const match = article.className.match(/\blg:col-span-(\d)\b/)
+      return match ? Number(match[1]) : 1
+    }
+    const { container } = renderPage('/en/projects')
+
+    const sections = container.querySelectorAll('section[aria-labelledby^="projects-group-"]')
+    expect(sections.length).toBe(GROUP_LABELS.length)
+    let wide = 0
+    sections.forEach((section) => {
+      const spans = [...section.querySelectorAll('article')].map(lgSpan)
+      wide += spans.filter((span) => span > 1).length
+      if (spans.length === 1) {
+        // A lone project is widened, but never stretched across the full row.
+        expect(spans[0]).toBeLessThan(3)
+      } else {
+        expect(spans.reduce((sum, span) => sum + span, 0) % 3).toBe(0)
+      }
+    })
+    expect(wide).toBeGreaterThan(0)
+
+    await userEvent.click(chip(t.categories.website))
+    await waitFor(() => expect(shownCount()).toBe(WEBSITE_COUNT))
+    expect([...container.querySelectorAll('article')].map(lgSpan)).toEqual(
+      Array(WEBSITE_COUNT).fill(1),
+    )
   })
 })

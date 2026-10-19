@@ -7,6 +7,9 @@ export const business = {
   addressHr: 'Kamenica 35 K, 42250 Kamenica, Hrvatska',
   oib: '58118867613',
   email: 'info@kodek.hr',
+  phone: '+385 99 808 7833',
+  /** `tel:` form of `phone` (no spaces). */
+  phoneHref: 'tel:+385998087833',
   website: 'https://kodek.hr',
   copyrightYear: 2026,
   social: {

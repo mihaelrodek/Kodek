@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- OPG Repić: stanica saća puna meda, med probija kroz donji vrh i kaplje -->
+  <defs>
+    <clipPath id="c"><polygon points="32,3.5 51.5,14.75 51.5,37.25 32,48.5 12.5,37.25 12.5,14.75"/></clipPath>
+    <linearGradient id="m" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffd659"/><stop offset="1" stop-color="#e08d0c"/>
+    </linearGradient>
+    <linearGradient id="k" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#eda21c"/><stop offset="1" stop-color="#d37f08"/>
+    </linearGradient>
+  </defs>
+  <!-- kap (s rubom) -->
+  <path d="M32 40 C32 40 23.5 50.5 23.5 54.5 A8.5 8.5 0 0 0 40.5 54.5 C40.5 50.5 32 40 32 40Z" fill="url(#k)" stroke="#5a3005" stroke-width="3.5" stroke-linejoin="round"/>
+  <!-- stanica -->
+  <g clip-path="url(#c)">
+    <rect width="64" height="64" fill="#fff1c7"/>
+    <path d="M4 21 C13 15.5 22 26.5 32 21 S50 15.5 60 21 V64 H4Z" fill="url(#m)"/>
+  </g>
+  <polygon points="32,3.5 51.5,14.75 51.5,37.25 32,48.5 12.5,37.25 12.5,14.75" fill="none" stroke="#5a3005" stroke-width="4.2" stroke-linejoin="round"/>
+  <!-- med "probija" kroz donji vrh: ispuna kapi preko obruba -->
+  <path d="M32 41.5 C32 41.5 26 50 26 54.3 A6 6 0 0 0 38 54.3 C38 50 32 41.5 32 41.5Z" fill="url(#k)"/>
+  <path d="M28.6 44.6 L32 41 L35.4 44.6 L35.4 48 L28.6 48Z" fill="#e8981a"/>
+  <ellipse cx="29.3" cy="54.2" rx="1.7" ry="2.8" fill="#fff" opacity=".6"/>
+  <ellipse cx="20" cy="15.5" rx="3" ry="1.6" fill="#fff" opacity=".7" transform="rotate(-30 20 15.5)"/>
+</svg>

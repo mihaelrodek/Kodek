@@ -1,11 +1,12 @@
-export type ProjectCategory =
-  | 'open-source'
-  | 'mobile'
-  | 'web'
-  | 'backend'
-  | 'iot'
-  | 'academic'
-  | 'personal'
+export type ProjectCategory = 'website' | 'app' | 'open-source' | 'academic'
+
+/** Display order for filter chips and the grouped default view. */
+export const PROJECT_CATEGORY_ORDER: readonly ProjectCategory[] = [
+  'website',
+  'app',
+  'open-source',
+  'academic',
+]
 
 export interface ProjectLink {
   label: string
@@ -19,6 +20,9 @@ export interface Project {
   description: string
   /** Optional Croatian variant — components fall back to `description`. */
   descriptionHr?: string
+  /** One-line summary for the landing page's selected work. */
+  summary?: string
+  summaryHr?: string
   year?: string
   sortYear?: number
   category: ProjectCategory
@@ -29,6 +33,11 @@ export interface Project {
   featured?: boolean
   gradient?: string
   image?: string
+  /**
+   * Public path of a short muted preview clip without extension; `.webm` and
+   * `.mp4` must both exist. `image` doubles as its poster.
+   */
+  video?: string
   logo?: string
 }
 
@@ -57,7 +66,6 @@ export const projects: Project[] = [
     sortYear: 2023,
     category: 'open-source',
     tags: ['Go', 'Helm', 'Kubernetes', 'CLI'],
-    featured: true,
     gradient: GRADIENTS.cobalt,
     links: [
       {
@@ -76,7 +84,7 @@ export const projects: Project[] = [
       'Android aplikacija koja dohvaća i prikazuje TV serije iz zadanog API-ja. Izrađena tijekom Infinum Summer Schoola s fokusom na moderne Android arhitekturne obrasce.',
     year: '2020',
     sortYear: 2020,
-    category: 'mobile',
+    category: 'app',
     tags: ['Android', 'Kotlin', 'REST API', 'Infinum'],
     gradient: GRADIENTS.blue,
   },
@@ -89,10 +97,9 @@ export const projects: Project[] = [
       'Spring Boot REST API za upravljanje dostavama pizza — narudžbe, vozači i dispečiranje. Izrađen tijekom Agency04 Summer Schoola za vježbanje čistog backend dizajna.',
     year: '2021',
     sortYear: 2021,
-    category: 'backend',
+    category: 'app',
     tags: ['Java', 'Spring Boot', 'REST', 'Agency04'],
     gradient: GRADIENTS.amber,
-    featured: true,
   },
   {
     id: 'menza-app',
@@ -124,7 +131,7 @@ export const projects: Project[] = [
       'Akademska web aplikacija izrađena u sklopu grupnog projekta na kolegiju Programsko inženjerstvo na FER-u, koja povezuje volonterske šetače pasa sa skloništima.',
     year: '2021',
     sortYear: 2021,
-    category: 'web',
+    category: 'academic',
     tags: ['Web', 'Group project', 'Software Engineering'],
     tagsHr: ['Web', 'Grupni projekt', 'Programsko inženjerstvo'],
     gradient: GRADIENTS.emerald,
@@ -138,7 +145,7 @@ export const projects: Project[] = [
       'Akademski IoT projekt izrađen na FER-u: mjerenje vrijednosti senzora tla, temperature i vlažnosti uređajima Waspmote i Pycom te prikaz u pratećim Android i iOS aplikacijama.',
     year: '2022',
     sortYear: 2022,
-    category: 'iot',
+    category: 'academic',
     tags: ['IoT', 'Waspmote', 'Pycom', 'Android', 'iOS'],
     gradient: GRADIENTS.lime,
   },
@@ -163,44 +170,104 @@ export const projects: Project[] = [
       },
     ],
   },
-  // ----------------------------- Personal projects -----------------------------
+  // ------------------------------- Websites --------------------------------
+  {
+    id: 'opg-repic',
+    summary: 'Website for a family apiary and its homemade honey.',
+    summaryHr: 'Web stranica obiteljskog pčelinjaka i domaćeg meda.',
+    title: 'opg-repic.hr',
+    description:
+      'Website for a family apiary from Struga. It presents their homemade honey varieties (rapeseed, acacia and sunflower), tells the story of the farm and lets visitors send an enquiry to arrange an order or pickup.',
+    descriptionHr:
+      'Web stranica obiteljskog pčelinjaka iz Struge. Predstavlja njihove vrste domaćeg meda (repičin, bagremov i suncokretov), priča priču o gospodarstvu i omogućuje posjetiteljima da pošalju upit za narudžbu ili preuzimanje.',
+    category: 'website',
+    tags: ['Small business', 'Honey', 'Contact form'],
+    tagsHr: ['Mali obrt', 'Med', 'Kontakt forma'],
+    featured: true,
+    logo: '/projects/opg-repic.svg',
+    image: '/projects/shots/opg-repic.jpg',
+    video: '/projects/videos/opg-repic',
+    links: [{ label: 'opg-repic.hr', href: 'https://opg-repic.hr', icon: 'external' }],
+  },
+  {
+    id: 'pikado-klub-snajperi',
+    summary: 'Website for a darts club from Lepoglava.',
+    summaryHr: 'Web stranica pikado kluba iz Lepoglave.',
+    title: 'pikadoklubsnajperi.hr',
+    description:
+      'Website for Pikado klub Snajperi, a darts club from Lepoglava founded in 2024 that competes in electronic and classic darts. It presents the club, its news and competitions, and invites visitors to support the club or join as members.',
+    descriptionHr:
+      'Web stranica Pikado kluba Snajperi, pikado kluba iz Lepoglave osnovanog 2024. koji se natječe u elektronskom i klasičnom pikadu. Predstavlja klub, novosti i natjecanja te poziva posjetitelje da podrže klub ili se učlane.',
+    category: 'website',
+    tags: ['Sports club', 'Darts', 'News'],
+    tagsHr: ['Sportski klub', 'Pikado', 'Novosti'],
+    featured: true,
+    logo: '/projects/pikado-klub-snajperi.svg',
+    image: '/projects/shots/pikado-klub-snajperi.jpg',
+    video: '/projects/videos/pikado-klub-snajperi',
+    links: [
+      {
+        label: 'pikadoklubsnajperi.hr',
+        href: 'https://www.pikadoklubsnajperi.hr',
+        icon: 'external',
+      },
+    ],
+  },
+  // ------------------------------- Applications ------------------------------
   {
     id: 'bela-turniri',
+    summary: 'Platform for organizing and following bela tournaments.',
+    summaryHr: 'Platforma za organizaciju i praćenje turnira u beli.',
     title: 'bela-turniri.com',
     description:
       'Independently designed and built personal platform for organizing and following belot tournaments. Supports pair registrations, draws, match results and standings, with a tournament calendar and map.',
     descriptionHr:
       'Privatna platforma koju sam samostalno osmislio i izradio za organizaciju i praćenje turnira u beli. Omogućuje prijave parova, ždrijeb, unos rezultata i praćenje poretka, uz kalendar i kartu turnira.',
-    category: 'personal',
+    category: 'app',
     tags: ['Web', 'Bela', 'Tournaments'],
     tagsHr: ['Web', 'Bela', 'Turniri'],
     logo: '/projects/bela-turniri.svg',
+    featured: true,
+    image: '/projects/shots/bela-turniri.jpg',
     links: [{ label: 'bela-turniri.com', href: 'https://bela-turniri.com', icon: 'external' }],
   },
   {
     id: 'bela-games',
+    summary: 'Bela in the browser, against friends or bots.',
+    summaryHr: 'Bela u pregledniku, s prijateljima ili protiv botova.',
     title: 'bela.games',
     description:
       'Independently designed and built personal web game for playing bela with friends or bots directly in the browser. Includes a scorekeeping logbook and works on mobile devices without installation.',
     descriptionHr:
       'Privatna web igra koju sam samostalno osmislio i izradio za igranje bele s prijateljima ili botovima izravno u pregledniku. Uključuje zapisnik za vođenje bodova i radi na mobitelu bez instalacije.',
-    category: 'personal',
+    category: 'app',
     tags: ['Web', 'Bela', 'Online game'],
     tagsHr: ['Web', 'Bela', 'Online igra'],
     logo: '/projects/bela-games.svg',
+    image: '/projects/shots/bela-games.jpg',
+    video: '/projects/videos/bela-games',
     links: [{ label: 'bela.games', href: 'https://bela.games', icon: 'external' }],
   },
   {
     id: 'futsal-turniri',
+    summary: 'Futsal tournaments with live results and standings.',
+    summaryHr: 'Futsal turniri s rezultatima i tablicama uživo.',
     title: 'futsal-turniri.com',
     description:
       'Independently designed and built personal platform for organizing and following futsal tournaments. Covers team and player entries, draws and schedules, live match results, standings and scorer statistics.',
     descriptionHr:
       'Privatna platforma koju sam samostalno osmislio i izradio za organizaciju i praćenje futsal turnira. Obuhvaća unos ekipa i igrača, ždrijeb i raspored utakmica te rezultate uživo, tablice i statistiku strijelaca.',
-    category: 'personal',
+    category: 'app',
     tags: ['Web', 'Futsal', 'Tournaments'],
     tagsHr: ['Web', 'Futsal', 'Turniri'],
     logo: '/projects/futsal-turniri.svg',
+    featured: true,
+    image: '/projects/shots/futsal-turniri.jpg',
     links: [{ label: 'futsal-turniri.com', href: 'https://futsal-turniri.com', icon: 'external' }],
   },
 ]
+
+/** The project's live site, if it has one (the first `external` link). */
+export function projectUrl(project: Project): string | undefined {
+  return project.links?.find((link) => link.icon === 'external')?.href
+}

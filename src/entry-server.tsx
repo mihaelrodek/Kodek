@@ -6,6 +6,9 @@ import App from './App'
 import { LanguageProvider } from './contexts/LanguageContext'
 import { ThemeProvider } from './contexts/ThemeContext'
 
+// Read by scripts/prerender.mjs for structured data (FAQPage) that mirrors the UI copy.
+export { translations } from './i18n/translations'
+
 /**
  * Build-time static entry. Unlike the streaming API, the static prerender API
  * resolves every lazy route before emitting HTML: no Suspense placeholders or

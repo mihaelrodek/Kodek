@@ -91,7 +91,9 @@ const server = createServer((req, res) => {
   const file = resolveFile(pathname)
 
   if (!file) {
-    const notFound = join(dist, '404.html')
+    // Mirrors worker/index.ts: unknown URLs under /en get the English 404 page.
+    const english = pathname === '/en' || pathname.startsWith('/en/')
+    const notFound = join(dist, english ? 'en/404.html' : '404.html')
     const body = isFile(notFound) ? readFileSync(notFound) : Buffer.from('Not found')
     res.writeHead(404, { 'Content-Type': MIME['.html'] })
     res.end(body)

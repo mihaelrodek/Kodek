@@ -211,7 +211,11 @@
     scroll-margin-top: 6rem;
   }
   .section-eyebrow {
-    @apply text-accent-700 dark:text-accent-300 font-mono text-[10px] font-medium tracking-[0.12em] uppercase;
+    @apply text-accent-700 dark:text-accent-300 inline-flex items-center gap-2.5 text-sm font-semibold;
+  }
+  .section-eyebrow::before {
+    content: '';
+    @apply bg-accent-600 dark:bg-accent-400 h-0.5 w-5 shrink-0 rounded-full;
   }
   .section-title {
     @apply mt-4 text-3xl leading-[1.15] font-medium tracking-[-0.04em] whitespace-pre-line sm:text-[2.75rem];
@@ -248,6 +252,29 @@
   .visual-pulse {
     stroke-dasharray: 0.18 1;
     stroke-dashoffset: 0.18;
+  }
+  /* Service visuals: base styles are the final frame, shown as-is with reduced motion. */
+  .site-url {
+    width: 12ch;
+  }
+  .site-caret-wrap,
+  .seo-caret-wrap {
+    visibility: hidden;
+  }
+  .site-loading {
+    opacity: 0;
+  }
+  .site-cursor {
+    transform: translate(52px, 98px);
+  }
+  .seo-results {
+    height: 7rem;
+  }
+  .seo-row {
+    transform: translateY(var(--to));
+  }
+  .price-badge-alt {
+    opacity: 0;
   }
   .spotlight-card {
     @apply relative h-full overflow-hidden rounded-3xl border border-zinc-200 bg-zinc-50/70 transition-colors duration-500 dark:border-zinc-800 dark:bg-zinc-900/40;
@@ -408,7 +435,225 @@
     opacity: 1;
   }
 }
+/* Website card, 7s loop: type the URL, load, reveal the page, click the button. */
+@keyframes site-type {
+  0%,
+  3% {
+    width: 0;
+    animation-timing-function: steps(12, end);
+  }
+  30%,
+  96% {
+    width: 12ch;
+  }
+  97%,
+  100% {
+    width: 0;
+  }
+}
+@keyframes site-caret-show {
+  0%,
+  36% {
+    visibility: visible;
+  }
+  37%,
+  96% {
+    visibility: hidden;
+  }
+  97%,
+  100% {
+    visibility: visible;
+  }
+}
+@keyframes site-load {
+  0%,
+  33% {
+    opacity: 1;
+    transform: scaleX(0);
+  }
+  42% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+  46%,
+  100% {
+    opacity: 0;
+    transform: scaleX(1);
+  }
+}
+@keyframes site-reveal {
+  0%,
+  42% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  48%,
+  86% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  90%,
+  100% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+}
+@keyframes site-cursor-path {
+  0%,
+  54% {
+    opacity: 0;
+    transform: translate(210px, 124px);
+  }
+  58% {
+    opacity: 1;
+    transform: translate(210px, 124px);
+  }
+  68%,
+  76% {
+    opacity: 1;
+    transform: translate(52px, 98px);
+  }
+  71% {
+    transform: translate(52px, 98px) scale(0.82);
+  }
+  84%,
+  100% {
+    opacity: 0;
+    transform: translate(52px, 98px);
+  }
+}
+@keyframes site-click {
+  0%,
+  70%,
+  76%,
+  100% {
+    transform: scale(1);
+  }
+  72% {
+    transform: scale(0.9);
+  }
+}
+/* SEO card, 6s loop: type a query, results load, the highlighted row rises to the top. */
+@keyframes seo-type {
+  0%,
+  5% {
+    transform: scaleX(0);
+    animation-timing-function: steps(8, end);
+  }
+  30%,
+  100% {
+    transform: scaleX(1);
+  }
+}
+@keyframes seo-caret-show {
+  0%,
+  34% {
+    visibility: visible;
+  }
+  35%,
+  100% {
+    visibility: hidden;
+  }
+}
+@keyframes seo-results-in {
+  0%,
+  34% {
+    opacity: 0;
+  }
+  42%,
+  88% {
+    opacity: 1;
+  }
+  96%,
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes seo-move {
+  0%,
+  50% {
+    transform: translateY(var(--from));
+  }
+  66%,
+  100% {
+    transform: translateY(var(--to));
+  }
+}
+/* Price list card, 6s loop: rows appear one by one; the file badge toggles. */
+@keyframes price-row-in {
+  0%,
+  4% {
+    opacity: 0;
+    transform: translateX(-6px);
+  }
+  12%,
+  80% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  90%,
+  100% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+}
+@keyframes price-badge-swap {
+  0%,
+  44% {
+    opacity: 1;
+  }
+  50%,
+  94% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
 @media (prefers-reduced-motion: no-preference) {
+  .site-url {
+    animation: site-type 7s infinite;
+  }
+  .site-caret-wrap {
+    animation: site-caret-show 7s infinite;
+  }
+  .site-caret {
+    animation: caret-blink 0.8s steps(1) infinite;
+  }
+  .site-loading {
+    animation: site-load 7s ease-out infinite;
+  }
+  .site-reveal {
+    animation: site-reveal 7s ease-out infinite both;
+  }
+  .site-cursor {
+    animation: site-cursor-path 7s ease-in-out infinite;
+  }
+  .site-click {
+    animation: site-click 7s ease-in-out infinite;
+  }
+  .seo-query {
+    transform-origin: left;
+    animation: seo-type 6s infinite;
+  }
+  .seo-caret-wrap {
+    animation: seo-caret-show 6s infinite;
+  }
+  .seo-results {
+    animation: seo-results-in 6s ease-out infinite;
+  }
+  .seo-row {
+    animation: seo-move 6s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  }
+  .price-row {
+    animation: price-row-in 6s ease-out infinite both;
+  }
+  .price-badge {
+    animation: price-badge-swap 4s ease-in-out infinite;
+  }
+  .price-badge-alt {
+    animation-delay: -2s;
+  }
   .drifting-paths {
     animation: drift-paths 18s ease-in-out infinite;
   }

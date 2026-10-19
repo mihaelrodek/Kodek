@@ -11,10 +11,12 @@ interface ProvidersProps {
 /**
  * The same provider stack `src/main.tsx` mounts, minus StrictMode (double
  * rendering would duplicate the render-order assertions in the hydration test).
+ * Starts on an English URL: the language comes from the path, and the unit
+ * tests assert English copy.
  */
 export function Providers({ children }: ProvidersProps) {
   return (
-    <MemoryRouter>
+    <MemoryRouter initialEntries={['/en']}>
       <LanguageProvider>
         <ThemeProvider>{children}</ThemeProvider>
       </LanguageProvider>

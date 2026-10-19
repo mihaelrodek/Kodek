@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#f3f2f2"/>
+  <g opacity=".08" stroke="#15318f"><path d="M0 105H1200M0 210H1200M0 315H1200M0 420H1200M0 525H1200M150 0V630M300 0V630M450 0V630M600 0V630M750 0V630M900 0V630M1050 0V630"/></g>
+  <!-- Mark and wordmark follow export/svg/kodek-logo-light.svg: mark 93 : font-size 96, gap 10. -->
+  <g transform="translate(120 190) scale(1.55)">
+    <rect width="120" height="120" fill="#15318f"/>
+    <path d="M13.75 14H31.15V106H13.75Z" fill="#fff"/>
+    <path d="M38.75 60 82.25 14h15.3v9.2L62.75 60l43.5 46h-24Z" fill="#fff"/>
+    <path d="M39.55 14h31.2l-9.5 10h-21.7Z" fill="#4264e3"/>
+  </g>
+  <text x="326" y="356" fill="#201e1d" font-family="'Chakra Petch', sans-serif" font-size="192" font-weight="700">odek<tspan fill="#15318f">_</tspan></text>
+  <text x="124" y="456" fill="#15318f" font-family="'Geist Variable', Inter, system-ui, sans-serif" font-size="34" font-weight="600">Web stranice i aplikacije po vašoj mjeri.</text>
+  <text x="124" y="506" fill="#5a5856" font-family="'Geist Variable', Inter, system-ui, sans-serif" font-size="24">Web aplikacije · Web stranice · SEO · Cjenici · Održavanje</text>
+  <text x="124" y="566" fill="#8a8886" font-family="'Geist Variable', Inter, system-ui, sans-serif" font-size="20" font-weight="600" letter-spacing="5">KODEK.HR</text>
+</svg>

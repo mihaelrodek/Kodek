@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { KodekMark } from './KodekMark'
+import { useTranslation } from '../hooks/useTranslation'
 
 interface BrandProps {
   className?: string
@@ -7,9 +8,10 @@ interface BrandProps {
 
 /** Header/footer logo: mark plus the "odek_" wordmark; only the mark below 480px. */
 export default function Brand({ className = '' }: BrandProps) {
+  const { path } = useTranslation()
   return (
     <Link
-      to="/"
+      to={path('home')}
       aria-label="Kodek"
       className={`focus-ring inline-flex min-h-11 items-center rounded-lg ${className}`}
     >

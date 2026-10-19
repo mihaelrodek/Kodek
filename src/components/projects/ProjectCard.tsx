@@ -1,16 +1,31 @@
 import type { PointerEvent } from 'react'
 import { motion } from 'framer-motion'
-import { type Project, type ProjectLink } from '../../data/projects'
+import { projectUrl, type Project, type ProjectLink } from '../../data/projects'
 import { localized } from '../../i18n/translations'
 import { useTranslation } from '../../hooks/useTranslation'
 import { useMatchMedia } from '../../hooks/useMatchMedia'
 
+/** Column span in the 3-column (lg) grid. */
+export type CardSpan = 1 | 2 | 3
+
 interface ProjectCardProps {
   project: Project
-  large?: boolean
+  /** lg column span; a wide card gets a larger title and, with a screenshot, a side-by-side layout. */
+  span?: CardSpan
+  /** Category + year line. The grouped view drops it (the group heading says it). */
+  showCategory?: boolean
+  className?: string
 }
 
-export default function ProjectCard({ project, large }: ProjectCardProps) {
+/** Tags beyond this are dropped so the row stays one line. */
+const MAX_TAGS = 3
+
+export default function ProjectCard({
+  project,
+  span = 1,
+  showCategory = true,
+  className = '',
+}: ProjectCardProps) {
   const { t, lang } = useTranslation()
   // Touch devices "stick" a CSS/whileHover hover state after a tap since
   // there's no pointer to move away. Only offer the hover lift on devices
@@ -22,6 +37,16 @@ export default function ProjectCard({ project, large }: ProjectCardProps) {
     event.currentTarget.style.setProperty('--spot-x', `${event.clientX - rect.left}px`)
     event.currentTarget.style.setProperty('--spot-y', `${event.clientY - rect.top}px`)
   }
+  const wide = span > 1
+  // A wide card with a screenshot sits image-left / text-right on lg so it
+  // stays as tall as its single-column neighbours instead of towering over them.
+  const horizontal = wide && Boolean(project.image)
+  const summary = project.summary
+    ? localized(lang, project.summary, project.summaryHr)
+    : localized(lang, project.description, project.descriptionHr)
+  const tags = project.tags.slice(0, MAX_TAGS)
+  const url = projectUrl(project)
+
   return (
     <motion.article
       layout
@@ -31,87 +56,134 @@ export default function ProjectCard({ project, large }: ProjectCardProps) {
       transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
       whileHover={canHover ? { y: -4 } : undefined}
       onPointerMove={onPointerMove}
-      className={['spotlight-card group flex flex-col', large ? 'lg:col-span-2' : ''].join(' ')}
+      className={['spotlight-card group flex min-w-0 flex-col', className].join(' ')}
     >
       <div aria-hidden="true" className="spotlight-card-glow" />
-      <span
-        aria-hidden="true"
-        className="group-hover:text-accent-600/15 dark:group-hover:text-accent-500/15 pointer-events-none absolute -top-8 -right-3 text-[11rem] leading-none font-black text-zinc-950/[0.04] transition-colors duration-500 select-none dark:text-white/[0.04]"
-      >
-        {initial(project.title)}
-      </span>
-
-      <div className="relative flex flex-1 flex-col p-6 sm:p-8">
-        <div className="mb-6 flex size-16 items-center justify-center overflow-hidden rounded-xl border border-zinc-200 bg-white dark:border-zinc-700">
-          {project.logo ? (
-            <img
-              src={project.logo}
-              alt=""
-              width={64}
-              height={64}
-              loading="lazy"
-              className="size-full object-contain p-2"
-            />
-          ) : (
-            <span aria-hidden="true" className="text-accent-700 font-heading text-3xl">
-              {initial(project.title)}
-            </span>
-          )}
-        </div>
-        <p className="flex flex-wrap items-center gap-3 font-mono text-[10px] tracking-widest text-zinc-500 uppercase dark:text-zinc-400">
-          <span className="bg-accent-600 dark:bg-accent-500 size-1.5 rounded-full" />
-          {t.projects.categories[project.category]}
-          {project.year && (
-            <>
-              <span aria-hidden="true">·</span>
-              {project.year}
-            </>
-          )}
-        </p>
-
-        {project.image && (
-          <img
-            src={project.image}
-            alt={project.title}
-            loading="lazy"
-            className="mt-6 h-40 w-full rounded-xl object-cover"
-          />
-        )}
-
-        <h3
-          className={[
-            'mt-6 font-medium tracking-[-0.035em] text-zinc-900 dark:text-zinc-50',
-            large ? 'text-3xl sm:text-4xl' : 'text-2xl',
-          ].join(' ')}
+      {!project.image && (
+        <span
+          aria-hidden="true"
+          className="group-hover:text-accent-600/15 dark:group-hover:text-accent-500/15 pointer-events-none absolute -top-6 -right-2 text-[8rem] leading-none font-black text-zinc-950/[0.04] transition-colors duration-500 select-none dark:text-white/[0.04]"
         >
-          {project.title}
-        </h3>
-        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
-          {localized(lang, project.description, project.descriptionHr)}
-        </p>
+          {initial(project.title)}
+        </span>
+      )}
 
-        {project.tags.length > 0 && (
-          <ul className="mt-6 flex flex-wrap gap-x-2 gap-y-1 font-mono text-[11px] text-zinc-500 dark:text-zinc-400">
-            {project.tags.map((tag, index) => (
-              <li key={tag} className="flex items-center gap-2">
-                {index > 0 && (
-                  <span aria-hidden="true" className="text-accent-600 dark:text-accent-500">
-                    /
-                  </span>
-                )}
-                {lang === 'hr' ? (project.tagsHr?.[index] ?? tag) : tag}
-              </li>
-            ))}
-          </ul>
-        )}
-
-        {project.links && project.links.length > 0 && (
-          <div className="mt-auto flex flex-wrap gap-2 pt-8">
-            {project.links.map((link) => (
-              <LinkButton key={link.href} link={link} />
-            ))}
+      <div
+        className={[
+          'relative flex flex-1 flex-col p-5 sm:p-6',
+          horizontal ? 'lg:flex-row lg:items-stretch lg:gap-6' : '',
+        ].join(' ')}
+      >
+        {project.image ? (
+          <div
+            className={[
+              'relative mb-4 aspect-video w-full shrink-0 overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800',
+              horizontal ? 'lg:mb-0 lg:aspect-auto lg:min-h-64 lg:w-[55%]' : '',
+            ].join(' ')}
+          >
+            {/* Decorative: the title is already in the h3 below. */}
+            <img
+              src={project.image}
+              alt=""
+              width={1280}
+              height={720}
+              loading="lazy"
+              decoding="async"
+              className="absolute inset-0 size-full object-cover object-top"
+            />
+          </div>
+        ) : (
+          <div className="mb-4 flex size-12 items-center justify-center overflow-hidden rounded-lg border border-zinc-200 bg-white dark:border-zinc-700">
+            {project.logo ? (
+              <img
+                src={project.logo}
+                alt=""
+                width={48}
+                height={48}
+                loading="lazy"
+                className="size-full object-contain p-1.5"
+              />
+            ) : (
+              <span aria-hidden="true" className="text-accent-700 font-heading text-2xl">
+                {initial(project.title)}
+              </span>
+            )}
           </div>
         )}
+
+        <div className="flex min-w-0 flex-1 flex-col">
+          {showCategory && (
+            <p className="mb-3 flex flex-wrap items-center gap-3 font-mono text-[10px] tracking-widest text-zinc-500 uppercase dark:text-zinc-400">
+              <span className="bg-accent-600 dark:bg-accent-500 size-1.5 rounded-full" />
+              {t.projects.categories[project.category]}
+              {project.year && (
+                <>
+                  <span aria-hidden="true">·</span>
+                  {project.year}
+                </>
+              )}
+            </p>
+          )}
+
+          <div className="flex items-baseline justify-between gap-3">
+            <h3
+              className={[
+                'min-w-0 font-medium tracking-[-0.03em] text-zinc-900 dark:text-zinc-50',
+                wide ? 'text-xl lg:text-2xl' : 'text-xl',
+              ].join(' ')}
+            >
+              {url ? (
+                // Stretched link: the ::after overlay makes the whole card open the site.
+                <a
+                  href={url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="focus-ring rounded after:absolute after:inset-0 after:z-[1] after:content-['']"
+                >
+                  {project.title}
+                </a>
+              ) : (
+                project.title
+              )}
+            </h3>
+            {!showCategory && project.year && (
+              <span className="shrink-0 font-mono text-[11px] text-zinc-500 tabular-nums dark:text-zinc-400">
+                {project.year}
+              </span>
+            )}
+          </div>
+          <p
+            className={[
+              'mt-2 max-w-2xl text-sm leading-relaxed text-zinc-600 dark:text-zinc-400',
+              project.summary ? '' : 'line-clamp-2',
+            ].join(' ')}
+          >
+            {summary}
+          </p>
+
+          {tags.length > 0 && (
+            <ul className="mt-4 truncate font-mono text-[11px] text-zinc-500 dark:text-zinc-400">
+              {tags.map((tag, index) => (
+                <li key={tag} className="inline">
+                  {index > 0 && (
+                    <span aria-hidden="true" className="text-accent-600 dark:text-accent-500 px-2">
+                      /
+                    </span>
+                  )}
+                  {lang === 'hr' ? (project.tagsHr?.[index] ?? tag) : tag}
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {project.links && project.links.length > 0 && (
+            <div className="mt-auto flex flex-wrap gap-2 pt-5">
+              {project.links.map((link) => (
+                <LinkButton key={link.href} link={link} />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </motion.article>
   )
@@ -123,7 +195,7 @@ function LinkButton({ link }: { link: ProjectLink }) {
       href={link.href}
       target="_blank"
       rel="noreferrer"
-      className="focus-ring hover:border-accent-300 hover:text-accent-700 dark:hover:border-accent-500/40 dark:hover:text-accent-300 inline-flex min-h-9 items-center gap-1.5 rounded-full border border-zinc-300 px-4 text-xs font-medium text-zinc-700 transition dark:border-zinc-700 dark:text-zinc-300"
+      className="focus-ring hover:border-accent-300 hover:text-accent-700 dark:hover:border-accent-500/40 dark:hover:text-accent-300 relative z-[2] inline-flex min-h-9 items-center gap-1.5 rounded-full border border-zinc-300 px-4 text-xs font-medium text-zinc-700 transition dark:border-zinc-700 dark:text-zinc-300"
     >
       <LinkIcon kind={link.icon} />
       {link.label}

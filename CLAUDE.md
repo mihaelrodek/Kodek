@@ -38,7 +38,7 @@ Type-checking is `tsc -b` over four project references: `tsconfig.app.json` (src
 To exercise `/api/contact` locally (plain `vite dev` has no Worker, so it 404s there):
 
 ```bash
-cp .dev.vars.example .dev.vars   # set WEB3FORMS_ACCESS_KEY
+cp .dev.vars.example .dev.vars   # set RESEND_API_KEY
 npm run dev:worker               # wrangler dev reads .dev.vars
 ```
 
@@ -58,19 +58,20 @@ first on every request (Node 22). `@/` aliases `src/`.
    before capturing HTML. The build rejects pending Suspense markers or injected scripts.
 3. `node scripts/prerender.mjs` — imports `dist/server/entry-server.js`, renders each route in its
    `ROUTES` table, injects markup into `#root` of the built `index.html`, writes flat files
-   (`index.html`, `about.html`, `projects.html`, `contact.html`, `404.html`) with per-route
-   `<title>`/description/canonical/OG/Twitter meta, computes sha256 CSP hashes for inline scripts
+   (`index.html`, `o-meni.html`, `projekti.html`, `kontakt.html`, `404.html`, `en.html`,
+   `en/about.html`, `en/projects.html`, `en/contact.html`, `en/404.html`) with per-route
+   `<html lang>`, `<title>`/description/canonical/OG/Twitter meta, reciprocal `hreflang` links, computes sha256 CSP hashes for inline scripts
    and substitutes `__CSP_SCRIPT_HASHES__` in `dist/_headers`, then deletes `dist/server`.
 
 `src/main.tsx` calls `hydrateRoot` when `#root` has children (production) and `createRoot`
 otherwise (dev). Consequences for any change:
 
-- **Adding a route** means touching `src/App.tsx` (lazy route) and `scripts/prerender.mjs`
-  (`ROUTES` entry with Kodek-framed title/description).
+- **Adding a route** means touching `src/i18n/routes.ts` (`ROUTE_PATHS` for both languages),
+  `src/App.tsx` (lazy route) and `scripts/prerender.mjs` (`PAGES` entry with hr + en
+  title/description).
 - **First render must be hydration-safe.** Nothing in the initial render may depend on
-  `localStorage`, `navigator`, `matchMedia`, or the theme/language state. `LanguageProvider`
-  always boots in `'en'` and adopts the stored/browser language in a post-mount effect for
-  exactly this reason. `ThemeProvider` reads the `dark` class the inline `index.html` script
+  `localStorage`, `navigator`, `matchMedia`, or the theme state. The language is derived from
+  the URL, so it is safe. `ThemeProvider` reads the `dark` class the inline `index.html` script
   already applied (it does not re-derive from storage). Markup that differs by theme (e.g. a
   toggle label) breaks hydration — keep it theme-neutral.
 - `prerender.mjs` throws if `index.html` loses the `<div id="root"></div>`, the canonical link,
@@ -107,30 +108,42 @@ logos, favicons, Chakra Petch font). Applied in the app as:
 
 ### i18n
 
-Two languages, `en`/`hr`. UI strings live in `src/i18n/translations.ts` (typed from the `en`
-object). Content data in `src/data/*.ts` carries optional `*Hr` sibling fields; components
-resolve with `localized(lang, en, hr)` falling back to English. Project category labels in
-translations (`t.projects.categories`) must stay in sync with `ProjectCategory` in
-`src/data/projects.ts`. Storage key `portfolio-lang`; only explicit toggle clicks persist.
+Two languages, `hr`/`en`, each with its own URLs: Croatian (default, `x-default`) at the root
+(`/`, `/o-meni`, `/projekti`, `/kontakt`), English under `/en` (`/en`, `/en/about`,
+`/en/projects`, `/en/contact`). `src/i18n/routes.ts` holds the path table; `LanguageProvider`
+(must sit inside the router) derives `lang` from the pathname and exposes `path(key)` for
+localized links. Never hard-code `/about`-style paths in components. `LanguageToggle` renders
+links to the same page in the other language; there is no stored language preference and no
+automatic redirect by browser language. UI strings live in `src/i18n/translations.ts` (typed
+from the `en` object). Content data in `src/data/*.ts` carries optional `*Hr` sibling fields;
+components resolve with `localized(lang, en, hr)` falling back to English. Project category
+labels in translations (`t.projects.categories`) must stay in sync with `ProjectCategory` in
+`src/data/projects.ts`.
 
 ### Worker / contact form
 
-`worker/index.ts` is the Worker entry: 301 `www.kodek.hr` → `kodek.hr`, `POST /api/contact` →
-`worker/contact.ts`, everything else → `env.ASSETS.fetch(request)`. Asset behaviour lives in
-`wrangler.jsonc`: `html_handling: auto-trailing-slash` (so `/about` serves `about.html`),
+`worker/index.ts` is the Worker entry: 301 `www.kodek.hr` and `http://kodek.hr` →
+`https://kodek.hr`, 301 legacy `/about`, `/projects`, `/contact` → `/o-meni`, `/projekti`,
+`/kontakt`, `POST /api/contact` → `worker/contact.ts`, everything else →
+`env.ASSETS.fetch(request)`; a 404 under `/en` is swapped for `en/404.html` (assets have a
+single 404 page, the Croatian one). `tests/e2e/static-server.mjs` mirrors that 404 rule. Asset behaviour lives in
+`wrangler.jsonc`: `html_handling: auto-trailing-slash` (so `/o-meni` serves `o-meni.html`),
 `not_found_handling: 404-page` (real 404 status from `404.html`), `run_worker_first: true`, and
 the custom-domain routes. Adding a route to the site needs no Worker change.
 
-`worker/contact.ts` holds `WEB3FORMS_ACCESS_KEY` (a Worker secret, no `VITE_` prefix — never
+`worker/contact.ts` holds `RESEND_API_KEY` (a Worker secret, no `VITE_` prefix — never
 expose it client-side), re-validates input with length caps, honors a honeypot field, applies a
-best-effort per-isolate rate limit, then forwards to Web3Forms. Unit tests:
+best-effort per-isolate rate limit, then sends the enquiry to `info@kodek.hr` via Resend
+(Reply-To: visitor) plus a best-effort confirmation to the visitor in the page's language. The
+confirmation must never echo visitor input (anti-relay). Senders are on the verified `kodek.hr`
+domain. Unit tests:
 `tests/unit/contact-function.test.ts` and `tests/unit/worker.test.ts`.
 
 ### Security headers / CSP
 
 `public/_headers` (honoured by Workers Static Assets) sets CSP with `script-src 'self' __CSP_SCRIPT_HASHES__` (filled at build).
 Adding any third-party script or iframe (e.g. Turnstile) requires extending `script-src` /
-`frame-src` there. `connect-src 'self'` — external fetches from the browser are blocked.
+`frame-src` there. `connect-src 'self' https://cloudflareinsights.com` — external fetches from the browser are blocked except the Cloudflare Web Analytics beacon (`script-src` allows `static.cloudflareinsights.com`).
 
 ### PWA manifest
 
@@ -146,9 +159,10 @@ element. `<MotionConfig reducedMotion="user">` wraps the app in both `src/main.t
 
 ### Kodek routes and business content
 
-`/` is the Kodek business landing page; `/about` is Mihael Rodek's founder profile (`AboutPage.tsx`,
-content from `src/data/founder.ts`, which reads `timeline.ts`); `/projects`
-is selected work; and `/contact` is the business enquiry form. Existing project records predate
+`/` (`/en`) is the Kodek business landing page; `/o-meni` (`/en/about`) is Mihael Rodek's founder
+profile (`AboutPage.tsx`, content from `src/data/founder.ts`, which reads `timeline.ts`);
+`/projekti` (`/en/projects`) is selected work; and `/kontakt` (`/en/contact`) is the business
+enquiry form. Existing project records predate
 Kodek unless their content explicitly establishes otherwise. Do not turn prior work into a client
 claim, testimonial, or business metric.
 
@@ -156,14 +170,15 @@ claim, testimonial, or business metric.
 routed; keep it compiling but do not link to it publicly.
 
 `index.html` contains a `ProfessionalService` JSON-LD entity for Kodek and a separate, linked
-`Person` entity for founder Mihael Rodek. Preserve their stable IDs and the founder's `/about`
-reference when changing structured data.
+`Person` entity for founder Mihael Rodek. Preserve their stable IDs (the Person `@id` stays
+`https://kodek.hr/about#mihael-rodek` even though its `url` is now `/o-meni`) when changing
+structured data.
 
 ### Deploy assets
 
 `https://kodek.hr` is the canonical origin in `index.html` and `public/robots.txt`.
-`prerender.mjs` reads that origin from the canonical tag and writes `dist/sitemap.xml` from its
-`ROUTES` table. `public/og.png` is exported from `public/og.svg` at 1200×630; the app icons are
+`prerender.mjs` reads that origin from the canonical tag and writes `dist/sitemap.xml` (with
+`xhtml:link` hreflang alternates) from its `PAGES` table. `public/og.png` (en) and `public/og-hr.png` (hr) are exported from `public/og.svg` / `og-hr.svg` at 1200×630, picked per language by `prerender.mjs`, which also emits `FAQPage` JSON-LD on both home pages from `t.landing.faqs` (re-exported by `entry-server.tsx`); the app icons are
 copied from the brand package, not generated. `public/cv.pdf` is generated
 from `scripts/cv.html` via headless Chrome (see README).
 

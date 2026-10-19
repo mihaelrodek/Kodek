@@ -8,12 +8,12 @@ import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger 
 import { useTranslation } from '../hooks/useTranslation'
 
 export default function Navbar() {
-  const { t } = useTranslation()
+  const { t, path } = useTranslation()
   const links = [
-    { to: '/#services', label: t.nav.services, end: true },
-    { to: '/projects', label: t.nav.work },
-    { to: '/about', label: t.nav.about },
-    { to: '/contact', label: t.nav.contact },
+    { to: path('home'), label: t.nav.home, end: true },
+    { to: path('projects'), label: t.nav.work },
+    { to: path('about'), label: t.nav.about },
+    { to: path('contact'), label: t.nav.contact },
   ]
 
   return (
@@ -48,7 +48,7 @@ export default function Navbar() {
             asChild
             className="bg-accent-600 hover:bg-accent-700 hidden px-4 text-white shadow-sm lg:inline-flex"
           >
-            <Link to="/contact">{t.nav.requestQuote}</Link>
+            <Link to={path('contact')}>{t.nav.requestQuote}</Link>
           </Button>
 
           <Sheet>
@@ -99,7 +99,7 @@ export default function Navbar() {
                     asChild
                     className="bg-accent-600 hover:bg-accent-700 mt-4 text-white shadow-sm"
                   >
-                    <Link to="/contact">{t.nav.requestQuote}</Link>
+                    <Link to={path('contact')}>{t.nav.requestQuote}</Link>
                   </Button>
                 </SheetClose>
               </nav>

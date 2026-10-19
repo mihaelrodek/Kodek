@@ -1,7 +1,7 @@
 {
-  "name": "Kodek — Custom software and websites",
+  "name": "Kodek | Web stranice i aplikacije po mjeri",
   "short_name": "Kodek",
-  "description": "Thoughtful custom web applications, small-business websites, and personal portfolios.",
+  "description": "Izrada web stranica i aplikacija po mjeri za obrte, male tvrtke i pojedince.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f3f2f2",
@@ -10,17 +10,20 @@
     {
       "src": "/icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "/icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "/favicon.svg",
       "sizes": "any",
       "type": "image/svg+xml"
     }
-  ]
+  ],
+  "lang": "hr"
 }

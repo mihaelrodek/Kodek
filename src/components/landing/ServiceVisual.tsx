@@ -1,13 +1,22 @@
-import { MousePointer2 } from 'lucide-react'
+import type { CSSProperties } from 'react'
+import { MousePointer2, Search } from 'lucide-react'
 
 const BARS = [34, 52, 41, 66, 48, 74, 88, 70, 96]
+// Search results: the highlighted row starts in slot 2 and rises to slot 0.
+const SEO_ROWS = [
+  { from: 0, to: 1, width: '42%', hit: false },
+  { from: 1, to: 2, width: '34%', hit: false },
+  { from: 2, to: 0, width: '46%', hit: true },
+  { from: 3, to: 3, width: '30%', hit: false },
+]
+const PRICE_ROWS = ['38%', '30%', '44%', '26%']
 
 /** Decorative animated wireframes — no invented product screenshots, copy, or metrics. */
 export function ServiceVisual({ kind }: { kind: number }) {
   return (
     <div
       aria-hidden="true"
-      className="service-visual pointer-events-none relative flex h-48 items-end justify-center overflow-hidden px-6 sm:h-56"
+      className="service-visual pointer-events-none relative flex h-40 items-end justify-center overflow-hidden px-6 sm:h-44"
     >
       {kind === 0 ? (
         <div className="visual-frame flex w-full max-w-md translate-y-6 transition-transform duration-700 ease-out group-hover:translate-y-2">
@@ -44,24 +53,40 @@ export function ServiceVisual({ kind }: { kind: number }) {
           </div>
         </div>
       ) : kind === 1 ? (
-        <div className="visual-frame relative w-full max-w-sm translate-y-6 transition-transform duration-700 ease-out group-hover:translate-y-2">
+        <div className="visual-frame relative h-full w-full max-w-sm translate-y-4 transition-transform duration-700 ease-out group-hover:translate-y-1">
           <div className="flex h-8 items-center gap-1.5 border-b border-zinc-200 px-3 dark:border-zinc-800">
-            <span className="bg-accent-600 size-1.5 rounded-full" />
-            <span className="size-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700" />
-            <span className="size-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700" />
-            <span className="mock-line ml-3 w-28" />
+            <span className="bg-accent-600 size-1.5 shrink-0 rounded-full" />
+            <span className="size-1.5 shrink-0 rounded-full bg-zinc-300 dark:bg-zinc-700" />
+            <span className="size-1.5 shrink-0 rounded-full bg-zinc-300 dark:bg-zinc-700" />
+            <span className="ml-2 flex h-5 min-w-0 flex-1 items-center rounded-full bg-zinc-100 px-2.5 font-mono text-[10px] leading-none text-zinc-600 dark:bg-zinc-900 dark:text-zinc-300">
+              <span className="site-url overflow-hidden whitespace-nowrap">www.kodek.hr</span>
+              <span className="site-caret-wrap">
+                <span className="site-caret bg-accent-600 dark:bg-accent-400 ml-px block h-3 w-px" />
+              </span>
+            </span>
           </div>
-          <div className="space-y-3 p-6">
-            <span className="visual-type block h-2.5 w-40 rounded-full bg-zinc-800 dark:bg-zinc-100" />
+          <span className="site-loading bg-accent-500 absolute inset-x-0 top-8 h-0.5 origin-left" />
+          <div className="flex gap-4 px-4 pt-3">
+            <div className="flex min-w-0 flex-1 flex-col">
+              <span className="site-reveal block h-2 w-full max-w-36 rounded-full bg-zinc-800 dark:bg-zinc-100" />
+              <span
+                className="site-reveal mt-1.5 block h-2 w-3/4 max-w-24 rounded-full bg-zinc-800 dark:bg-zinc-100"
+                style={{ animationDelay: '0.15s' }}
+              />
+              <span
+                className="site-reveal mock-line mt-3 block w-full max-w-40"
+                style={{ animationDelay: '0.3s' }}
+              />
+              <span className="site-reveal mt-2.5 block w-16" style={{ animationDelay: '0.55s' }}>
+                <span className="site-click bg-accent-600 block h-5 w-16 rounded-full" />
+              </span>
+            </div>
             <span
-              className="visual-type block h-2.5 w-28 rounded-full bg-zinc-800 dark:bg-zinc-100"
-              style={{ animationDelay: '0.35s' }}
+              className="site-reveal from-accent-600/70 to-accent-500/10 block h-16 w-24 shrink-0 rounded-lg bg-gradient-to-br max-[400px]:hidden"
+              style={{ animationDelay: '0.25s' }}
             />
-            <span className="mock-line block w-48" />
-            <span className="mock-line block w-36" />
-            <span className="visual-click bg-accent-600 mt-4 block h-7 w-20 rounded-full" />
           </div>
-          <MousePointer2 className="visual-cursor fill-accent-600 absolute top-0 left-0 size-5 text-white" />
+          <MousePointer2 className="site-cursor fill-accent-600 absolute top-0 left-0 size-5 text-white" />
         </div>
       ) : kind === 2 ? (
         <div className="flex translate-y-4 items-end justify-center">
@@ -78,6 +103,74 @@ export function ServiceVisual({ kind }: { kind: number }) {
               <span className="block h-1.5 w-8 rounded-full bg-white/40 mix-blend-difference" />
             </div>
           ))}
+        </div>
+      ) : kind === 3 ? (
+        <div className="visual-frame relative h-full w-full max-w-sm translate-y-6 transition-transform duration-700 ease-out group-hover:translate-y-2">
+          <div className="p-3">
+            <div className="flex h-7 items-center gap-2 rounded-full border border-zinc-200 px-3 dark:border-zinc-800">
+              <Search className="size-3 shrink-0 text-zinc-400" />
+              <span className="seo-query bg-accent-600/70 dark:bg-accent-400/70 block h-1.5 w-20 rounded-full" />
+              <span className="seo-caret-wrap">
+                <span className="site-caret bg-accent-600 dark:bg-accent-400 block h-3 w-px" />
+              </span>
+            </div>
+          </div>
+          <div className="seo-results relative mx-3">
+            {SEO_ROWS.map((row, i) => (
+              <div
+                key={i}
+                className={`seo-row absolute inset-x-0 top-0 flex h-6 items-center gap-2 rounded-md px-2 ${
+                  row.hit ? 'bg-accent-600/10 ring-accent-500/40 z-10 ring-1' : ''
+                }`}
+                style={
+                  { '--from': `${row.from * 28}px`, '--to': `${row.to * 28}px` } as CSSProperties
+                }
+              >
+                <span
+                  className={`size-2 shrink-0 rounded-full ${
+                    row.hit ? 'bg-accent-600' : 'bg-zinc-300 dark:bg-zinc-700'
+                  }`}
+                />
+                <span
+                  className={`block h-1.5 rounded-full ${
+                    row.hit ? 'bg-accent-600 dark:bg-accent-400' : 'bg-zinc-300 dark:bg-zinc-700'
+                  }`}
+                  style={{ width: row.width }}
+                />
+                <span className="mock-line ml-auto block w-10" />
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : kind === 4 ? (
+        <div className="visual-frame relative h-full w-full max-w-sm translate-y-6 transition-transform duration-700 ease-out group-hover:translate-y-2">
+          <div className="flex h-8 items-center justify-between border-b border-zinc-200 px-3 dark:border-zinc-800">
+            <span className="mock-line block w-16" />
+            <span className="border-accent-500/40 text-accent-700 dark:text-accent-300 relative flex h-5 w-11 items-center justify-center rounded-md border font-mono text-[10px] leading-none">
+              <span className="price-badge">.csv</span>
+              <span className="price-badge price-badge-alt absolute inset-0 flex items-center justify-center">
+                .xml
+              </span>
+            </span>
+          </div>
+          <div className="px-4 pt-3">
+            <div className="flex items-center gap-3 pb-2">
+              <span className="block h-1 w-10 rounded-full bg-zinc-300 dark:bg-zinc-700" />
+              <span className="ml-auto block h-1 w-7 rounded-full bg-zinc-300 dark:bg-zinc-700" />
+              <span className="block h-1 w-7 rounded-full bg-zinc-300 dark:bg-zinc-700" />
+            </div>
+            {PRICE_ROWS.map((width, i) => (
+              <div
+                key={i}
+                className="price-row flex items-center gap-3 border-t border-zinc-200 py-2 dark:border-zinc-800"
+                style={{ animationDelay: `${i * 0.35}s` }}
+              >
+                <span className="mock-line block" style={{ width }} />
+                <span className="ml-auto block h-2 w-7 rounded-sm border border-dashed border-zinc-300 dark:border-zinc-700" />
+                <span className="bg-accent-600 dark:bg-accent-500 block h-2 w-7 rounded-sm" />
+              </div>
+            ))}
+          </div>
         </div>
       ) : (
         <div className="visual-frame w-full max-w-md translate-y-6 p-5 transition-transform duration-700 ease-out group-hover:translate-y-2">

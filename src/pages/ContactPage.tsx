@@ -6,7 +6,7 @@ import { useTranslation } from '../hooks/useTranslation'
 import type { Translations } from '../i18n/translations'
 
 // Posts to the Worker (worker/index.ts → worker/contact.ts) which holds
-// the Web3Forms key server-side and proxies the submission.
+// the Resend API key server-side and sends the emails.
 const CONTACT_ENDPOINT = '/api/contact'
 
 /**
@@ -174,6 +174,12 @@ export default function ContactPage() {
                 label: t.contact.emailLabel,
                 href: `mailto:${business.email}`,
                 text: business.email,
+                external: false,
+              },
+              {
+                label: t.contact.phoneLabel,
+                href: business.phoneHref,
+                text: business.phone,
                 external: false,
               },
               {

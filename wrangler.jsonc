@@ -21,6 +21,6 @@
     { "pattern": "kodek.hr", "custom_domain": true },
     { "pattern": "www.kodek.hr", "custom_domain": true }
   ]
-  // Secrets (not in this file): WEB3FORMS_ACCESS_KEY — `npx wrangler secret put
-  // WEB3FORMS_ACCESS_KEY` or the dashboard; locally in .dev.vars.
+  // Secrets (not in this file): RESEND_API_KEY — `npx wrangler secret put
+  // RESEND_API_KEY` or the dashboard; locally in .dev.vars.
 }

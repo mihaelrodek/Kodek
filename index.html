@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="hr">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" href="/favicon.ico" sizes="48x48" />
@@ -22,13 +22,23 @@
       })()
     </script>
 
-    <title>Kodek — Custom software and websites</title>
+    <title>Izrada web stranica i aplikacija po mjeri | Kodek</title>
     <meta
       name="description"
-      content="Kodek builds thoughtful custom web applications, small-business websites, and personal portfolios from Croatia."
+      content="Izrada web stranica i web aplikacija po mjeri, SEO optimizacija, cjenici sa sidrenim i baznim cijenama te održavanje. Varaždinska županija i cijela Hrvatska."
     />
     <meta name="author" content="Kodek, vl. Mihael Rodek" />
-    <meta name="robots" content="index, follow" />
+    <meta
+      name="robots"
+      content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+    />
+    <meta name="format-detection" content="telephone=yes" />
+
+    <!-- Location (Kamenica, Varaždinska županija; coordinates of the village per Wikipedia) -->
+    <meta name="geo.region" content="HR-05" />
+    <meta name="geo.placename" content="Kamenica" />
+    <meta name="geo.position" content="46.244;16.034" />
+    <meta name="ICBM" content="46.244, 16.034" />
     <link rel="canonical" href="https://kodek.hr/" />
 
     <!-- Browser UI color -->
@@ -37,28 +47,34 @@
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Kodek" />
-    <meta property="og:title" content="Kodek — Custom software and websites" />
+    <meta
+      property="og:title"
+      content="Izrada web stranica i aplikacija po mjeri | Kodek"
+    />
     <meta
       property="og:description"
-      content="Thoughtful custom web applications, small-business websites, and personal portfolios."
+      content="Izrada web stranica i web aplikacija po mjeri, SEO optimizacija, cjenici sa sidrenim i baznim cijenama te održavanje. Varaždinska županija i cijela Hrvatska."
     />
     <meta property="og:url" content="https://kodek.hr/" />
-    <meta property="og:image" content="https://kodek.hr/og.png" />
+    <meta property="og:image" content="https://kodek.hr/og-hr.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Kodek — Good ideas. Thoughtfully built." />
-    <meta property="og:locale" content="en_US" />
-    <meta property="og:locale:alternate" content="hr_HR" />
+    <meta property="og:image:alt" content="Logotip Kodek i natpis: Web stranice i aplikacije po vašoj mjeri." />
+    <meta property="og:locale" content="hr_HR" />
+    <meta property="og:locale:alternate" content="en_US" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Kodek — Custom software and websites" />
+    <meta
+      name="twitter:title"
+      content="Izrada web stranica i aplikacija po mjeri | Kodek"
+    />
     <meta
       name="twitter:description"
-      content="Thoughtful custom web applications, small-business websites, and personal portfolios."
+      content="Izrada web stranica i web aplikacija po mjeri, SEO optimizacija, cjenici sa sidrenim i baznim cijenama te održavanje. Varaždinska županija i cijela Hrvatska."
     />
-    <meta name="twitter:image" content="https://kodek.hr/og.png" />
-    <meta name="twitter:image:alt" content="Kodek — Good ideas. Thoughtfully built." />
+    <meta name="twitter:image" content="https://kodek.hr/og-hr.png" />
+    <meta name="twitter:image:alt" content="Logotip Kodek i natpis: Web stranice i aplikacije po vašoj mjeri." />
 
     <!-- Structured data for search engines. A data block (type="application/ld+json")
          is never executed, so it needs no CSP hash. -->
@@ -73,40 +89,128 @@
             "legalName": "Kodek, obrt za računalno programiranje i ostale usluge",
             "taxID": "58118867613",
             "url": "https://kodek.hr/",
+            "description": "Izrada web stranica i web aplikacija po mjeri, SEO optimizacija, cjenici sa sidrenim i baznim cijenama te održavanje.",
             "logo": "https://kodek.hr/brand/kodek-mark-blue.svg",
             "image": "https://kodek.hr/og.png",
             "email": "mailto:info@kodek.hr",
+            "telephone": "+385998087833",
             "address": {
               "@type": "PostalAddress",
               "streetAddress": "Kamenica 35 K",
               "postalCode": "42250",
               "addressLocality": "Kamenica",
+              "addressRegion": "Varaždinska županija",
               "addressCountry": "HR"
             },
-            "areaServed": {
-              "@type": "Country",
-              "name": "Croatia"
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "Hrvatska",
+                "alternateName": "Croatia"
+              },
+              {
+                "@type": "AdministrativeArea",
+                "name": "Varaždinska županija",
+                "alternateName": "Varaždin County"
+              }
+            ],
+            "knowsLanguage": ["hr", "en"],
+            "sameAs": ["https://github.com/mihaelrodek", "https://linkedin.com/in/mihaelrodek"],
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "Usluge",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Web aplikacije po mjeri",
+                    "description": "Namjenske web aplikacije, integracije i poslovni alati.",
+                    "provider": { "@id": "https://kodek.hr/#business" }
+                  }
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Web stranice za male tvrtke",
+                    "description": "Pregledne, brze i jednostavne web stranice za obrte i male tvrtke.",
+                    "provider": { "@id": "https://kodek.hr/#business" }
+                  }
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Osobni portfoliji",
+                    "description": "Web prisutnost za kreativce, freelancere i stručnjake.",
+                    "provider": { "@id": "https://kodek.hr/#business" }
+                  }
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "SEO optimizacija",
+                    "description": "Tehnički SEO, brzo učitavanje, strukturirani podaci i jasan sadržaj.",
+                    "provider": { "@id": "https://kodek.hr/#business" }
+                  }
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Izrada cjenika",
+                    "description": "Cjenici sa sidrenim i baznim cijenama prema NN 101/2026: .csv ili .xml za web stranicu i cjenik za prodajno mjesto.",
+                    "provider": { "@id": "https://kodek.hr/#business" }
+                  }
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Održavanje i nadogradnje",
+                    "description": "Ažuriranja, ispravci i poboljšanja nakon objave web stranice ili aplikacije.",
+                    "provider": { "@id": "https://kodek.hr/#business" }
+                  }
+                }
+              ]
             },
             "founder": {
               "@id": "https://kodek.hr/about#mihael-rodek"
             }
           },
           {
+            "@type": "WebSite",
+            "@id": "https://kodek.hr/#website",
+            "url": "https://kodek.hr/",
+            "name": "Kodek",
+            "inLanguage": ["hr", "en"],
+            "publisher": {
+              "@id": "https://kodek.hr/#business"
+            }
+          },
+          {
             "@type": "Person",
             "@id": "https://kodek.hr/about#mihael-rodek",
             "name": "Mihael Rodek",
-            "url": "https://kodek.hr/about",
-            "mainEntityOfPage": "https://kodek.hr/about",
+            "url": "https://kodek.hr/o-meni",
+            "mainEntityOfPage": "https://kodek.hr/o-meni",
             "jobTitle": "Software Developer",
             "email": "mailto:info@kodek.hr",
             "worksFor": {
               "@id": "https://kodek.hr/#business"
             },
-            "sameAs": [
-              "https://github.com/mihaelrodek",
-              "https://linkedin.com/in/mihaelrodek"
-            ],
-            "knowsAbout": ["Java", "Go", "React", "TypeScript", "Spring Boot", "Android", "Kubernetes"]
+            "sameAs": ["https://github.com/mihaelrodek", "https://linkedin.com/in/mihaelrodek"],
+            "knowsAbout": [
+              "Java",
+              "Go",
+              "React",
+              "TypeScript",
+              "Spring Boot",
+              "Android",
+              "Kubernetes"
+            ]
           }
         ]
       }

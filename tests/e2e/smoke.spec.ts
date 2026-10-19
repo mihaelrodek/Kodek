@@ -17,12 +17,17 @@ const HYDRATION_SIGNATURES = [
 ]
 
 const ROUTES = [
-  { path: '/', name: 'home' },
-  { path: '/about', name: 'about' },
-  { path: '/projects', name: 'projects' },
-  { path: '/contact', name: 'contact' },
-  { path: '/404', name: '404 page' },
-  { path: '/does-not-exist', name: '404' },
+  { path: '/', name: 'home', lang: 'hr' },
+  { path: '/o-meni', name: 'about', lang: 'hr' },
+  { path: '/projekti', name: 'projects', lang: 'hr' },
+  { path: '/kontakt', name: 'contact', lang: 'hr' },
+  { path: '/404', name: '404 page', lang: 'hr' },
+  { path: '/does-not-exist', name: '404', lang: 'hr' },
+  { path: '/en', name: 'en home', lang: 'en' },
+  { path: '/en/about', name: 'en about', lang: 'en' },
+  { path: '/en/projects', name: 'en projects', lang: 'en' },
+  { path: '/en/contact', name: 'en contact', lang: 'en' },
+  { path: '/en/does-not-exist', name: 'en 404', lang: 'en' },
 ]
 
 function watchConsole(page: Page): string[] {
@@ -71,32 +76,38 @@ test('unknown URLs render the 404 page with a 404 status', async ({ page }) => {
   expect(response?.status()).toBe(404)
   await settle(page)
 
-  await expect(page.getByRole('heading', { level: 1, name: /page not found/i })).toBeVisible()
+  await expect(page.getByRole('heading', { level: 1, name: /nije pronađena/i })).toBeVisible()
   await expect(page.getByText('404', { exact: true })).toBeVisible()
-  await expect(page.getByRole('link', { name: /back home/i })).toBeVisible()
+})
+
+test('unknown URLs under /en render the English 404 page', async ({ page }) => {
+  const response = await page.goto('/en/does-not-exist')
+
+  expect(response?.status()).toBe(404)
+  await settle(page)
+
+  await expect(page.getByRole('heading', { level: 1, name: /page not found/i })).toBeVisible()
+  await expect(page.getByRole('link', { name: /back home/i })).toHaveAttribute('href', '/en')
 })
 
 test('the nav links reach every prerendered route without a reload', async ({ page, isMobile }) => {
   const messages = watchConsole(page)
-  await page.goto('/')
+  await page.goto('/en')
   await settle(page)
 
   if (isMobile) {
     await page.getByRole('button', { name: /open.*menu/i }).click()
   }
   await page.getByRole('link', { name: 'Work', exact: true }).first().click()
-  await expect(page).toHaveURL(/\/projects$/)
+  await expect(page).toHaveURL(/\/en\/projects$/)
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
 
   expect(hydrationProblems(messages)).toEqual([])
 })
 
-test('stored Croatian and dark-mode preferences hydrate cleanly on every route', async ({
-  page,
-}) => {
+test('every route declares its language and hydrates cleanly in dark mode', async ({ page }) => {
   const messages = watchConsole(page)
   await page.addInitScript(() => {
-    window.localStorage.setItem('portfolio-lang', 'hr')
     window.localStorage.setItem('portfolio-theme', 'dark')
   })
 
@@ -111,7 +122,7 @@ test('stored Croatian and dark-mode preferences hydrate cleanly on every route',
       `hydration problems on ${route.path}`,
     ).toEqual([])
     await expect(page.locator('html')).toHaveClass(/dark/)
-    await expect(page.locator('html')).toHaveAttribute('lang', 'hr')
+    await expect(page.locator('html')).toHaveAttribute('lang', route.lang)
   }
 })
 
@@ -121,7 +132,7 @@ test.describe('mobile', () => {
   test('founder page renders on a phone viewport', async ({ page }) => {
     const messages = watchConsole(page)
 
-    await page.goto('/about')
+    await page.goto('/o-meni')
     await settle(page)
 
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Mihael Rodek')

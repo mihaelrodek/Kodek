@@ -1,7 +1,7 @@
 import { timelineEvents, type TimelineEvent } from './timeline'
 
 /**
- * Content for the public founder profile (/about). Career and education are
+ * Content for the public founder profile (/o-meni, /en/about). Career and education are
  * read from `timeline.ts` so the two pages — this one and the unrouted
  * personal timeline in AboutTimelinePage.tsx — never drift apart.
  */
@@ -13,11 +13,12 @@ function event(id: string): TimelineEvent {
 
 export const founder = {
   /**
-   * Public path of the portrait, e.g. '/founder/mihael-rodek.jpg' once the
-   * photo is dropped into `public/founder/`. Undefined renders a neutral
-   * monogram tile instead of a broken image.
+   * Public path of the portrait, e.g. '/founder/mihael-rodek.webp' once the
+   * photo is dropped into `public/founder/`. The same path serves both the
+   * About page and the landing page founder section. Undefined renders a
+   * neutral monogram tile instead of a broken image.
    */
-  photo: undefined as string | undefined,
+  photo: '/founder/mihael-rodek.webp' as string | undefined,
   initials: 'MR',
   /** Current employer, with client projects as milestones. */
   career: event('true-north'),

@@ -2,13 +2,20 @@
  * Contact form proxy — the only server-side code, run by the Worker in
  * worker/index.ts for `POST /api/contact`.
  *
- * Holds the Web3Forms access key server-side (WEB3FORMS_ACCESS_KEY is a
- * Worker secret) so it never ships in the client bundle. Validates input,
- * honors the honeypot, then forwards to Web3Forms.
+ * Holds the Resend API key server-side (RESEND_API_KEY is a Worker secret) so
+ * it never ships in the client bundle. Validates input, honors the honeypot,
+ * then sends two emails through Resend (kodek.hr must be a verified domain):
+ *
+ *   1. the enquiry to OWNER_EMAIL, with Reply-To set to the visitor, and
+ *   2. a short confirmation to the visitor, in the language of the page they
+ *      wrote from. It deliberately echoes nothing the visitor typed (not even
+ *      the name), so the form cannot be abused to mail arbitrary content to a
+ *      third-party address. A failed confirmation does not fail the request:
+ *      the enquiry itself already arrived.
  *
  * Responses are deliberately opaque: `{ success: true }` on success, otherwise
  * `{ success: false, code }` with a stable machine code the client maps to a
- * translated string. The upstream (Web3Forms) response body is never forwarded
+ * translated string. The upstream (Resend) response body is never forwarded
  * — it is not localized and may leak provider detail. The English `message`
  * field is kept for curl users only; the client must not display it.
  *
@@ -16,7 +23,50 @@
  */
 
 export interface ContactEnv {
-  WEB3FORMS_ACCESS_KEY?: string
+  RESEND_API_KEY?: string
+}
+
+const RESEND_URL = 'https://api.resend.com/emails'
+/** Where enquiries go. */
+const OWNER_EMAIL = 'info@kodek.hr'
+/** Sender of the enquiry notification (any address on the verified domain). */
+const NOTIFY_FROM = 'Kodek web obrazac <obrazac@kodek.hr>'
+/** Sender of the visitor confirmation; replies land in the owner's inbox. */
+const CONFIRM_FROM = 'Kodek <info@kodek.hr>'
+
+type Lang = 'hr' | 'en'
+
+const CONFIRMATION: Record<Lang, { subject: string; text: string }> = {
+  hr: {
+    subject: 'Zaprimili smo vaš upit — Kodek',
+    text: [
+      'Pozdrav,',
+      '',
+      'hvala na upitu poslanom preko kodek.hr. Poruka je zaprimljena i javit ću vam se u roku od jednog radnog dana.',
+      '',
+      'Ako želite nešto dodati, slobodno odgovorite na ovaj e-mail.',
+      '',
+      'Lijep pozdrav,',
+      'Mihael Rodek',
+      'Kodek, obrt za računalno programiranje i ostale usluge',
+      'https://kodek.hr',
+    ].join('\n'),
+  },
+  en: {
+    subject: 'We received your enquiry — Kodek',
+    text: [
+      'Hello,',
+      '',
+      'thank you for getting in touch through kodek.hr. Your message has arrived and I will get back to you within one business day.',
+      '',
+      'If you would like to add anything, simply reply to this email.',
+      '',
+      'Best regards,',
+      'Mihael Rodek',
+      'Kodek, obrt za računalno programiranje i ostale usluge',
+      'https://kodek.hr/en',
+    ].join('\n'),
+  },
 }
 
 interface ContactBody {
@@ -79,6 +129,44 @@ const ERROR_MESSAGE: Record<ErrorCode, string> = {
   upstream: 'Could not deliver the message right now.',
 }
 
+/** Language of the page the form was sent from: English under /en, Croatian otherwise. */
+function langOf(page: string): Lang {
+  try {
+    const { pathname } = new URL(page)
+    return pathname === '/en' || pathname.startsWith('/en/') ? 'en' : 'hr'
+  } catch {
+    return 'hr'
+  }
+}
+
+function escapeHtml(value: string): string {
+  return value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;')
+}
+
+/** Strip CR/LF so visitor input can never add lines to a header-like field. */
+function oneLine(value: string): string {
+  return value.replace(/[\r\n]+/g, ' ')
+}
+
+async function sendEmail(apiKey: string, email: Record<string, unknown>): Promise<boolean> {
+  try {
+    const res = await fetch(RESEND_URL, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(email),
+    })
+    return res.ok
+  } catch {
+    // Network failure reaching Resend: reported the same way as an upstream error.
+    return false
+  }
+}
+
 function json(data: unknown, status: number): Response {
   return new Response(JSON.stringify(data), {
     status,
@@ -95,7 +183,7 @@ function fail(code: ErrorCode): Response {
 }
 
 export async function handleContact(request: Request, env: ContactEnv): Promise<Response> {
-  if (!env.WEB3FORMS_ACCESS_KEY) return fail('not_configured')
+  if (!env.RESEND_API_KEY) return fail('not_configured')
 
   const ip = request.headers.get('CF-Connecting-IP') ?? 'unknown'
   if (rateLimited(ip)) return fail('rate_limited')
@@ -128,29 +216,36 @@ export async function handleContact(request: Request, env: ContactEnv): Promise<
     return fail('validation')
   }
 
-  let res: Response
-  try {
-    res = await fetch('https://api.web3forms.com/submit', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({
-        access_key: env.WEB3FORMS_ACCESS_KEY,
-        from_name: 'Portfolio contact form',
-        subject: subject || 'New message from your portfolio',
-        name,
-        email,
-        message,
-        page: (body.page ?? '').slice(0, 300),
-      }),
-    })
-  } catch {
-    // Network failure reaching Web3Forms — indistinguishable to the caller
-    // from an upstream error, and reported the same way.
-    return fail('upstream')
-  }
+  const page = (body.page ?? '').slice(0, 300)
+  const lang = langOf(page)
+  const rows: [string, string][] = [
+    ['Ime', name],
+    ['Email', email],
+    ['Tema', subject || '—'],
+    ['Stranica', page || '—'],
+  ]
 
   // The upstream body is intentionally dropped: whatever went wrong there,
   // the client only ever needs "it did not go through".
-  if (!res.ok) return fail('upstream')
+  const delivered = await sendEmail(env.RESEND_API_KEY, {
+    from: NOTIFY_FROM,
+    to: [OWNER_EMAIL],
+    reply_to: email,
+    subject: oneLine(`Novi upit: ${subject || name}`).slice(0, 200),
+    text: `${rows.map(([k, v]) => `${k}: ${v}`).join('\n')}\n\n${message}`,
+    html: `<table>${rows
+      .map(([k, v]) => `<tr><th align="left">${k}</th><td>${escapeHtml(v)}</td></tr>`)
+      .join('')}</table><p style="white-space:pre-wrap">${escapeHtml(message)}</p>`,
+  })
+  if (!delivered) return fail('upstream')
+
+  // Best effort: the enquiry is already in the owner's inbox.
+  await sendEmail(env.RESEND_API_KEY, {
+    from: CONFIRM_FROM,
+    to: [email],
+    reply_to: OWNER_EMAIL,
+    subject: CONFIRMATION[lang].subject,
+    text: CONFIRMATION[lang].text,
+  })
   return ok()
 }

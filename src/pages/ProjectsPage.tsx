@@ -1,8 +1,14 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { ChevronDown } from 'lucide-react'
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
-import { projects, type ProjectCategory } from '../data/projects'
-import ProjectCard from '../components/projects/ProjectCard'
+import {
+  PROJECT_CATEGORY_ORDER,
+  projects,
+  type Project,
+  type ProjectCategory,
+} from '../data/projects'
+import ProjectCard, { type CardSpan } from '../components/projects/ProjectCard'
 import { useTranslation } from '../hooks/useTranslation'
 
 type Filter = 'all' | ProjectCategory
@@ -19,7 +25,8 @@ const CATEGORY_COUNTS = projects.reduce(
   (map, p) => map.set(p.category, (map.get(p.category) ?? 0) + 1),
   new Map<ProjectCategory, number>(),
 )
-const AVAILABLE_CATEGORIES = [...CATEGORY_COUNTS.keys()]
+// Display order comes from the data module, not from record insertion order.
+const AVAILABLE_CATEGORIES = PROJECT_CATEGORY_ORDER.filter((cat) => CATEGORY_COUNTS.has(cat))
 
 /** Query-param names. Short because they end up in shared links. */
 const PARAM_CATEGORY = 'c'
@@ -140,6 +147,20 @@ export default function ProjectsPage() {
 
   const totalCount = projects.length
   const matchCount = filtered.length
+  // The default view (no category, no query) is grouped by category; any
+  // active filter collapses it into one flat grid. This is also the
+  // prerendered shape, so the first client render stays grouped.
+  const grouped = filter === 'all' && !query
+  const isFiltering = filter !== 'all' || query !== ''
+
+  const groups = useMemo(
+    () =>
+      AVAILABLE_CATEGORIES.map((category) => ({
+        category,
+        items: filtered.filter((p) => p.category === category),
+      })).filter((group) => group.items.length > 0),
+    [filtered],
+  )
 
   return (
     <section className="container-page py-10 md:py-14">
@@ -162,6 +183,19 @@ export default function ProjectsPage() {
               count={CATEGORY_COUNTS.get(cat) ?? 0}
             />
           ))}
+          {isFiltering && (
+            <button
+              type="button"
+              onClick={() => {
+                // Sort is deliberately untouched: it is a view preference,
+                // not a filter, so `?sort=` survives a clear.
+                apply({ filter: 'all', query: '' })
+              }}
+              className="focus-ring text-accent-600 dark:text-accent-400 ml-1 min-h-9 rounded px-2 text-xs font-medium underline-offset-4 hover:underline"
+            >
+              {t.projects.clear}
+            </button>
+          )}
         </div>
 
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -198,52 +232,136 @@ export default function ProjectsPage() {
           <label className="sr-only" htmlFor="sort">
             {t.projects.sortAria}
           </label>
-          <select
-            id="sort"
-            value={sort}
-            onChange={(e) => apply({ sort: e.target.value as SortMode })}
-            className="focus:border-accent-500 focus:ring-accent-500/20 min-h-10 rounded-full border border-zinc-300 bg-transparent px-4 py-2 text-sm transition outline-none focus:ring-2 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
-          >
-            <option value="recent">{t.projects.sortRecent}</option>
-            <option value="oldest">{t.projects.sortOldest}</option>
-            <option value="alpha">{t.projects.sortAlpha}</option>
-          </select>
+          <div className="relative">
+            <select
+              id="sort"
+              value={sort}
+              onChange={(e) => apply({ sort: e.target.value as SortMode })}
+              className="focus:border-accent-500 focus:ring-accent-500/20 min-h-10 w-full cursor-pointer appearance-none rounded-full border border-zinc-300 bg-transparent py-2 pr-10 pl-4 text-sm transition outline-none focus:ring-2 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+            >
+              <option value="recent">{t.projects.sortRecent}</option>
+              <option value="oldest">{t.projects.sortOldest}</option>
+              <option value="alpha">{t.projects.sortAlpha}</option>
+            </select>
+            <ChevronDown
+              aria-hidden="true"
+              className="pointer-events-none absolute top-1/2 right-3.5 size-4 -translate-y-1/2 text-zinc-500 dark:text-zinc-400"
+            />
+          </div>
         </div>
       </div>
 
-      <div className="mt-4 flex items-center justify-between text-sm text-zinc-500 dark:text-zinc-400">
-        <span>{t.projects.showing(matchCount, totalCount)}</span>
-        {(filter !== 'all' || query) && (
-          <button
-            type="button"
-            onClick={() => {
-              // Sort is deliberately untouched (as before) — it is a view
-              // preference, not a filter, so `?sort=` survives a clear.
-              apply({ filter: 'all', query: '' })
-            }}
-            className="focus-ring text-accent-600 dark:text-accent-400 rounded text-xs font-medium underline-offset-4 hover:underline"
-          >
-            {t.projects.clear}
-          </button>
-        )}
-      </div>
-
       <LayoutGroup>
-        <motion.div layout className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <AnimatePresence mode="popLayout">
-            {filtered.map((project) => (
-              <ProjectCard
-                key={project.id}
-                project={project}
-                large={project.featured && filter === 'all' && !query}
-              />
+        {grouped ? (
+          <div className="mt-8 flex flex-col gap-14">
+            {groups.map(({ category, items }) => (
+              <section key={category} aria-labelledby={`projects-group-${category}`}>
+                <h2
+                  id={`projects-group-${category}`}
+                  className="section-eyebrow flex items-center gap-3 border-t border-zinc-200 pt-4 dark:border-zinc-800"
+                >
+                  {t.projects.categories[category]}
+                  <span className="text-zinc-400 tabular-nums dark:text-zinc-600">
+                    {items.length}
+                  </span>
+                </h2>
+                <ProjectGrid items={items} bento />
+              </section>
             ))}
-          </AnimatePresence>
-        </motion.div>
+          </div>
+        ) : (
+          <ProjectGrid items={filtered} className="mt-8" />
+        )}
       </LayoutGroup>
 
       {matchCount === 0 && <EmptyState onReset={() => apply({ filter: 'all', query: '' })} />}
     </section>
+  )
+}
+
+/**
+ * Bento layout for one group in the 3-column grid. Pure and order-dependent
+ * only, so the server and client compute identical spans.
+ *
+ * 1. Walk the items with a running column count. A featured item takes two
+ *    columns when it still fits in the current row, otherwise one.
+ * 2. Close a gap in the last row:
+ *    - one column missing: widen the row's last card by one;
+ *    - a lone single card after a full row of three singles: rebalance both
+ *      rows to `2 1 / 1 2`;
+ *    - any other lone card: span the full row (it renders horizontally).
+ *    A group with a single project is never stretched past two columns.
+ */
+function bentoSpans(items: readonly Pick<Project, 'featured'>[]): CardSpan[] {
+  if (items.length === 0) return []
+  if (items.length === 1) return [2]
+
+  const spans: CardSpan[] = []
+  const rowStarts: number[] = []
+  let col = 0
+  items.forEach((item, index) => {
+    if (col === 0) rowStarts.push(index)
+    const span: CardSpan = item.featured && col <= 1 ? 2 : 1
+    spans.push(span)
+    col = (col + span) % 3
+  })
+  if (col === 0) return spans
+
+  const last = spans.length - 1
+  const gap = 3 - col
+  if (gap === 1) {
+    spans[last] = (spans[last] + 1) as CardSpan
+    return spans
+  }
+  // gap === 2: the last row is one single-column card.
+  const prevStart = rowStarts[rowStarts.length - 2]
+  const prevRow = spans.slice(prevStart, last)
+  if (prevRow.length === 3) {
+    spans[prevStart] = 2
+    spans[last] = 2
+    return spans
+  }
+  spans[last] = 3
+  return spans
+}
+
+const LG_SPAN_CLASS: Record<CardSpan, string> = {
+  1: '',
+  2: 'lg:col-span-2',
+  3: 'lg:col-span-3',
+}
+
+function ProjectGrid({
+  items,
+  bento = false,
+  className = 'mt-5',
+}: {
+  items: Project[]
+  /** Grouped view: irregular spans (see `bentoSpans`) and no category line on cards. */
+  bento?: boolean
+  className?: string
+}) {
+  const spans = bento ? bentoSpans(items) : null
+  return (
+    <motion.div
+      layout
+      className={`${className} grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3`}
+    >
+      <AnimatePresence mode="popLayout">
+        {items.map((project, index) => {
+          const span = spans?.[index] ?? 1
+          return (
+            <ProjectCard
+              key={project.id}
+              project={project}
+              span={span}
+              className={LG_SPAN_CLASS[span]}
+              showCategory={!bento}
+            />
+          )
+        })}
+      </AnimatePresence>
+    </motion.div>
   )
 }
 

@@ -4,7 +4,9 @@
  * about the person — `timeline.ts` tags/milestones, `projects.ts` tags, the
  * `knowsAbout` JSON-LD in `index.html`, and the Skills section of
  * `scripts/cv.html` — not invented independently. Keep it that way: add a
- * skill here only once it also shows up in one of those sources.
+ * skill here only once it also shows up in one of those sources, or when the
+ * owner confirms using it (Astro, Medusa, Node.js, PostgreSQL, Redis,
+ * Keycloak, Firebase, Docker, Cloudflare, Quarkus, React Native, Vite).
  *
  * `titleHr` is an optional Croatian variant — components resolve it with
  * `localized()` (src/i18n/translations.ts), falling back to the English
@@ -25,23 +27,36 @@ export const skillGroups: SkillGroup[] = [
   {
     id: 'backend',
     title: 'Backend',
-    skills: ['Java', 'Go', 'Spring Boot', 'REST APIs', 'Microservices'],
+    skills: [
+      'Java',
+      'Go',
+      'Spring Boot',
+      'Quarkus',
+      'Node.js',
+      'REST APIs',
+      'Microservices',
+      'Medusa',
+      'PostgreSQL',
+      'Redis',
+      'Keycloak',
+      'Firebase',
+    ],
   },
   {
     id: 'frontend',
     title: 'Frontend',
-    skills: ['React', 'TypeScript', 'HTML/CSS', 'Tailwind CSS'],
+    skills: ['React', 'Astro', 'Vite', 'TypeScript', 'HTML/CSS', 'Tailwind CSS'],
   },
   {
     id: 'mobile',
     title: 'Mobile',
     titleHr: 'Mobilni razvoj',
-    skills: ['Android', 'Kotlin'],
+    skills: ['Android', 'Kotlin', 'React Native'],
   },
   {
     id: 'infrastructure',
     title: 'Infrastructure & Tools',
     titleHr: 'Infrastruktura i alati',
-    skills: ['Kubernetes', 'Helm', 'Git', 'CI/CD', 'CLI'],
+    skills: ['Docker', 'Kubernetes', 'Helm', 'Cloudflare', 'Git', 'CI/CD', 'CLI'],
   },
 ]

@@ -3,7 +3,6 @@ import { ArrowUpRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { business } from '../data/business'
 import { founder } from '../data/founder'
-import { skillGroups } from '../data/skills'
 import { localized } from '../i18n/translations'
 import { useTranslation } from '../hooks/useTranslation'
 
@@ -14,7 +13,7 @@ import { useTranslation } from '../hooks/useTranslation'
  * AboutTimelinePage.tsx and is not routed.
  */
 export default function AboutPage() {
-  const { t, lang } = useTranslation()
+  const { t, lang, path } = useTranslation()
   const copy = t.about
   const { career, degree, graduation } = founder
 
@@ -35,9 +34,9 @@ export default function AboutPage() {
               <img
                 src={founder.photo}
                 alt={copy.photoAlt}
-                width={640}
-                height={800}
-                className="aspect-[4/5] w-full rounded-2xl object-cover"
+                width={792}
+                height={1188}
+                className="h-auto w-full [mask-image:linear-gradient(to_bottom,black_80%,transparent)]"
               />
             ) : (
               <div
@@ -65,7 +64,7 @@ export default function AboutPage() {
 
             <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
               <Button asChild className="h-12 rounded-full px-6 text-sm">
-                <Link to="/contact">
+                <Link to={path('contact')}>
                   {copy.ctaButton}
                   <ArrowUpRight className="ml-2 size-4" />
                 </Link>
@@ -176,73 +175,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section
-        className="border-t border-zinc-200 dark:border-zinc-800"
-        aria-labelledby="founder-skills"
-      >
-        <div className="container-page py-20 sm:py-24">
-          <div className="max-w-2xl">
-            <h2 id="founder-skills" className="text-3xl sm:text-4xl">
-              {copy.skillsTitle}
-            </h2>
-            <p className="mt-3 text-zinc-600 dark:text-zinc-400">{copy.skillsIntro}</p>
-          </div>
-          <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {skillGroups.map((group) => (
-              <div
-                key={group.id}
-                className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900/60"
-              >
-                <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
-                  {localized(lang, group.title, group.titleHr)}
-                </h3>
-                <ul className="mt-4 flex flex-wrap gap-2">
-                  {group.skills.map((skill) => (
-                    <li
-                      key={skill}
-                      className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
-                    >
-                      {skill}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section
-        className="border-t border-zinc-200 dark:border-zinc-800"
-        aria-labelledby="founder-principles"
-      >
-        <div className="container-page py-20 sm:py-24">
-          <div className="grid gap-10 lg:grid-cols-[0.7fr_1.3fr] lg:gap-20">
-            <div>
-              <p className="section-eyebrow">{copy.principlesEyebrow}</p>
-              <h2 id="founder-principles" className="section-title">
-                {copy.principlesTitle}
-              </h2>
-            </div>
-            <ol className="grid gap-8 sm:grid-cols-3">
-              {copy.principles.map((principle, index) => (
-                <li key={principle.title}>
-                  <p className="text-accent-700 dark:text-accent-300 font-mono text-[10px] font-medium tracking-[0.12em]">
-                    0{index + 1}
-                  </p>
-                  <h3 className="mt-3 text-base font-semibold text-zinc-900 dark:text-zinc-100">
-                    {principle.title}
-                  </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
-                    {principle.body}
-                  </p>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </div>
-      </section>
-
       <section className="container-page pb-24 sm:pb-32" aria-labelledby="founder-cta">
         <div className="flex flex-col gap-6 rounded-2xl bg-zinc-50 p-7 sm:p-12 md:flex-row md:items-center md:justify-between dark:bg-zinc-900/60">
           <div>
@@ -252,7 +184,7 @@ export default function AboutPage() {
             <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">{copy.ctaBody}</p>
           </div>
           <Button asChild className="h-12 shrink-0 rounded-full px-6 text-sm">
-            <Link to="/contact">
+            <Link to={path('contact')}>
               {copy.ctaButton}
               <ArrowUpRight className="ml-2 size-4" />
             </Link>

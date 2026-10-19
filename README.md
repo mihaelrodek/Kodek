@@ -47,7 +47,7 @@ npm run typecheck     # TypeScript type checking
 ```
 worker/
   index.ts             Cloudflare Worker: www redirect, /api/contact, else static assets
-  contact.ts           contact form proxy (Web3Forms)
+  contact.ts           contact form handler (Resend)
 wrangler.jsonc         Worker + static assets config (routing, 404 page, custom domains)
 scripts/
   prerender.mjs        post-build prerender (static HTML + per-route meta + CSP hashes)
@@ -76,19 +76,23 @@ The `@/` import alias resolves to `src/` (configured in `vite.config.ts` and `ts
 ## Contact form
 
 The `/contact` page posts to the **Worker** (`worker/index.ts` → `worker/contact.ts`), which
-holds the [Web3Forms](https://web3forms.com) access key server-side and forwards an enquiry to
-the business email. The key never ships in the client bundle. To wire it up:
+holds the [Resend](https://resend.com) API key server-side, sends the enquiry to `info@kodek.hr`
+(Reply-To: the visitor) and a short confirmation to the visitor in the page's language (it echoes
+nothing the visitor typed). The key never ships in the client bundle. To wire it up:
 
-1. Go to https://web3forms.com, create a form with `info@kodek.hr` as the delivery address,
-   and copy its access key.
-2. In production: `npx wrangler secret put WEB3FORMS_ACCESS_KEY` (or Workers & Pages → kodek →
-   Settings → Variables and Secrets, type Secret), then redeploy.
-3. Locally: `cp .dev.vars.example .dev.vars`, paste the key, then `npm run dev:worker`. Plain
+1. In Resend → Domains, add `kodek.hr` and create the DNS records it lists (DKIM TXT on
+   `resend._domainkey`, MX + SPF TXT on the `send` subdomain) in Cloudflare DNS, DNS only (grey
+   cloud). Wait until the domain shows Verified.
+2. Resend → API Keys: create a key with "Sending access" for `kodek.hr`.
+3. In production: `npx wrangler secret put RESEND_API_KEY` (or Workers & Pages → kodek →
+   Settings → Variables and Secrets, type Secret), then redeploy. Delete the old
+   `WEB3FORMS_ACCESS_KEY` secret.
+4. Locally: `cp .dev.vars.example .dev.vars`, paste the key, then `npm run dev:worker`. Plain
    `vite dev` has no `/api/contact`.
 
 Validation runs on both sides: the client checks before submit, and the Worker re-validates
 (including length caps), honors a honeypot field, applies a best-effort per-IP rate limit
-(5 requests / 10 min, per isolate), and only then calls Web3Forms.
+(5 requests / 10 min, per isolate), and only then calls Resend.
 
 The in-Worker rate limit is friction, not a guarantee (isolate state is not shared across
 Cloudflare locations). For a hard limit, add a WAF rate-limiting rule on `/api/contact` in the
@@ -144,7 +148,7 @@ apex). `dist/_headers` applies the CSP and cache headers.
 - Manual: `npm run deploy` (builds, then `wrangler deploy`; needs `npx wrangler login` once).
 - Workers Builds (Git): build command `npm run build`, deploy command `npx wrangler deploy`,
   Node 22. CI also runs `wrangler deploy --dry-run` to validate the config without deploying.
-- Secret: `WEB3FORMS_ACCESS_KEY` (see Contact form).
+- Secret: `RESEND_API_KEY` (see Contact form).
 
 The build prerenders every route to static HTML (`index.html`, `about.html`, `projects.html`,
 `contact.html`) plus a real `404.html`, so direct navigation works without a SPA fallback and
@@ -172,6 +176,7 @@ LinkedIn, X) need a raster image, so export it to `public/og.png` once:
 
 ```bash
 npx svgexport public/og.svg public/og.png 1200:630
+npx svgexport public/og-hr.svg public/og-hr.png 1200:630   # Croatian card, used on hr pages
 ```
 
 (or open `og.svg` in Figma/Inkscape and export at 1200×630). The meta tags already reference `/og.png`.
